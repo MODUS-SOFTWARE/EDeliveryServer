@@ -47,7 +47,18 @@ public class EDeliveryServerConfiguration {
 
     private File file;
     
-    public EDeliveryServerConfiguration(){}
+    //Βάζω όλα τα settings σε μια κλάση. 
+    //private EdeliverySettings settings;//Μάλλον δεν χρειάζεται.
+    
+    /*public EdeliverySettings getSettings() {
+		return settings;
+	}
+
+	public void setSettings(EdeliverySettings settings) {
+		this.settings = settings;
+	}*/
+
+	public EDeliveryServerConfiguration(){}
 
     @PostConstruct
     public void Properties() {
@@ -74,7 +85,28 @@ public class EDeliveryServerConfiguration {
 
     }
 
-    public String getWorkingPath() {
+    public String getPapyrosServersHost(){
+    	return this.EDeliveryServerProperties.getString("papyrosServersHost");
+    }
+    
+    public int getDocumentServerPort(){
+    	return Integer.parseInt(this.EDeliveryServerProperties.getString("documentServerPort"));
+    }
+    
+    public int getEdeliveryUser(){
+    	return Integer.parseInt(this.EDeliveryServerProperties.getString("edeliveryUsers"));
+    }
+    
+    
+    public ResourceBundle getEDeliveryServerProperties() {
+		return EDeliveryServerProperties;
+	}
+
+	public void setEDeliveryServerProperties(ResourceBundle eDeliveryServerProperties) {
+		EDeliveryServerProperties = eDeliveryServerProperties;
+	}
+
+	public String getWorkingPath() {
         return workingPath;
     }
 

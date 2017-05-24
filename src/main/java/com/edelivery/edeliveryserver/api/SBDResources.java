@@ -28,6 +28,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.modus.edeliveryclient.EDeliveryClient;
+import com.modus.edeliveryclient.EDeliveryClientImplementation;
+import com.modus.edeliveryclient.consumer.SbdConsumer;
+import com.modus.edeliveryclient.consumer.SmpParticipantConsumer;
+
 /**
  *
  * @author pantelispanka
@@ -71,12 +76,28 @@ public class SBDResources {
     @Path("/newoutgoing")
     @Consumes("application/json")
     @Produces("application/json")
-    @ApiOperation(value = "Creates a new SBD at the AP")
-    public Response postSBD(){
+    @ApiOperation(value = "Creates and a message at DB ")
+    public Response newoutgoing(){ //input   DOCUMENT DATA.
         
         return Response.ok().build();
         
     }
+    
+    @POST
+    @Path("/sendMessage")
+    @Consumes("application/json")
+    @Produces("application/json")
+    @ApiOperation(value = "Send document")
+    public Response postSBD(Integer id){ //input   DOCUMENT DATA.
+        
+    	
+    	EDeliveryClient deliveryClient ;
+    	
+    	//deliveryClient.sendMessage(params, auth);
+        return Response.ok().build();
+        
+    }
+    
     
     @DELETE
     @Path("/delete/{id}")

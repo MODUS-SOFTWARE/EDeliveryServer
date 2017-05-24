@@ -68,7 +68,7 @@ public class AdministrativeUsersHandler extends AbstractDbHandler<Administrative
         AdministrativeUsers AdminUser = new AdministrativeUsers();
         try{
             AdminUser = (AdministrativeUsers) em.createNamedQuery("AdministrativeUsers.findByUsername")
-                .setParameter("username", username);
+                .setParameter("username", username).getSingleResult();
         }catch(Exception e){
             throw new BadRequestException("Username not found");
         }
