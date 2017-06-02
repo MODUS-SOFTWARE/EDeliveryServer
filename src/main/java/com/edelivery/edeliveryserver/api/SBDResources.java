@@ -19,29 +19,55 @@ package com.edelivery.edeliveryserver.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import com.edelivery.edeliveryserver.utils.EdeliveryUtils;
 
 import com.modus.edeliveryclient.EDeliveryClient;
-import com.modus.edeliveryclient.EDeliveryClientImplementation;
-import com.modus.edeliveryclient.consumer.SbdConsumer;
-import com.modus.edeliveryclient.consumer.SmpParticipantConsumer;
 
 /**
  *
  * @author pantelispanka
  */
+
 @Path("/SBD")
 @Consumes("application/json")
 @Produces("application/json")
 @Api(value = "/StandardBusinessDocument", tags = "Standard business document resources")
+@ApplicationScoped
 public class SBDResources {
+	
+	EdeliveryUtils edeliveryUtils;
+	public SBDResources(){
+		/*	EdeliveryDatasource eds ;
+    		DocumentSendHandler docSendHd;
+    		DocumentServerClient docClient;
+    		EDeliveryServerConfiguration eDeliveryServerConfiguration;
+    		AsyncHttpClient httpClient;
+    		Serializer serializer ;
+    		String basepath = "http://192.168.20.10:8080/APREST";
+    		String user="sp1";
+    	    String password="sp1";
+    	    Authorization auth ;
+		 * */
+		//TODO REMOVE 
+		
+	}
+	@Inject
+	public SBDResources(EdeliveryUtils edeliveryUtils){
+		this.edeliveryUtils=edeliveryUtils;
+	}
 
     @GET
     @Path("/allincoming")
@@ -88,12 +114,48 @@ public class SBDResources {
     @Consumes("application/json")
     @Produces("application/json")
     @ApiOperation(value = "Send document")
-    public Response postSBD(Integer id){ //input   DOCUMENT DATA.
+    public Response sendMessage(Integer id){ //input   DOCUMENT DATA.
         
     	
     	EDeliveryClient deliveryClient ;
-    	
+    	//sbdUtils.sendNextSBD();
     	//deliveryClient.sendMessage(params, auth);
+        return Response.ok().build();
+        
+    }
+    //sendNextSBD()
+    @POST
+    @Path("/sendNextMessage")
+    @Consumes("application/json")
+    @Produces("application/json")
+    @ApiOperation(value = "Send document")
+    public Response sendNextMessage(){ //input   DOCUMENT DATA.
+        
+    	
+    	try{
+    		//EdeliveryDatasource eds,DocumentSendHandler docSendHd ,DocumentServerClient docClient
+			//,EDeliveryServerConfiguration eDeliveryServerConfiguration
+    		/*EdeliveryDatasource eds;
+    		DocumentSendHandler docSendHd;
+    		DocumentServerClient docClient;
+    		EDeliveryServerConfiguration eDeliveryServerConfiguration;
+    		AsyncHttpClient httpClient;
+    		Serializer serializer ;
+    		String basepath = "http://192.168.20.10:8080/APREST";
+    		String user="sp1";
+    	    String password="sp1";
+    	    Authorization auth ;*/
+    	
+			
+    		if(this.edeliveryUtils==null){
+    			this.edeliveryUtils = new EdeliveryUtils();
+    		}
+    		this.edeliveryUtils.sendNextSBD(); 
+    	}
+    	catch(Exception ex){
+    		ex.printStackTrace();
+    		Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    	}
         return Response.ok().build();
         
     }

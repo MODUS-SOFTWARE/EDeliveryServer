@@ -122,4 +122,9 @@ public class EDeliveryServerConfiguration {
         EDeliveryServerConfiguration.OS = OS;
     }
 
+    
+    public String getConnector(){
+    	return this.EDeliveryServerProperties.getString("connector");
+    	
+    }
 }
