@@ -6,6 +6,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
+   <!--  <servlet> this servlet needs parameters - these are the initial values of applications constants
+        <servlet-name>Initializer</servlet-name>
+        <servlet-class>gr.modus.edeliveryserver.servlet.Initializer</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+     -->
     
 
 </web-app>

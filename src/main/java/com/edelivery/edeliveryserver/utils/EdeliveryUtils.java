@@ -4,18 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandler;
-import com.edelivery.edeliveryserver.db.models.DocumentsSend;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modus.edeliveryclient.EDeliveryClient;
 import com.modus.edeliveryclient.EDeliveryClientImplementation;
@@ -30,11 +33,13 @@ import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
 
 import gr.modus.edelivery.adapter.messages.MessageParams;
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
+import gr.modus.edelivery.pollers.SendPoller;
 
 @ApplicationScoped
 public class EdeliveryUtils {
 	
-	
+	private static final Logger LOG = Logger.getLogger(EdeliveryUtils.class.getName());
+	 
 	EdeliveryDatasource eds;
 	DocumentSendHandler docSendHd;
 	DocumentServerClient docClient;
@@ -138,7 +143,7 @@ public class EdeliveryUtils {
 	    	params.setSamSenderId("123");
 	      
 	        deliveryClient.sendMessage(sbdParams, params, auth);
-		
+	        LOG.log(Level.INFO,"message send");
 	}
 	
 	
