@@ -1,16 +1,13 @@
 package gr.modus.edelivery.pollers;
 
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-
 import javax.sql.DataSource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -19,17 +16,9 @@ import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
 import com.edelivery.edeliveryserver.utils.EdeliveryUtils;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
-
-
-
-
 @Singleton
 @Startup
-public class SendPoller {
-	/**
-	 *
-	 * @author chomenidis
-	 */
+public class ReceivePoller {
 
 	private static final Logger LOG = Logger.getLogger(SendPoller.class.getName());
 	DataSource dataSource;
@@ -50,7 +39,7 @@ public class SendPoller {
 	}
 
 	public void init() {
-		LOG.log(Level.INFO, "Initializing Sender Poller.");
+		LOG.log(Level.INFO, "Initializing ReceivePoller Poller.");
 		try {
 
 			// InitialContext context = new InitialContext();
@@ -74,7 +63,6 @@ public class SendPoller {
 
 	}
 
-
 	private void start() throws Exception {
 		LOG.log(Level.INFO, "Indexing poller started.");
 
@@ -93,9 +81,6 @@ public class SendPoller {
 
 		}
 	}
-	
-	
-	
 
 	public void action() {
 		try {

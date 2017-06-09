@@ -69,6 +69,9 @@ public class DocumentsSend implements Serializable {
     @NotNull
     @Column(name = "message_id")
     private int messageId;
+    
+    private int docId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 80)
@@ -398,5 +401,13 @@ public class DocumentsSend implements Serializable {
     public String toString() {
         return "com.edelivery.edeliveryserver.DocumentsSend[ id=" + id + " ]";
     }
+
+	public int getDocId() {
+		return docId;
+	}
+
+	public void setDocId(int docId) {
+		this.docId = docId;
+	}
     
 }
