@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<StandardBusinessDocument
+	xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+	<StandardBusinessDocumentHeader>
+		<HeaderVersion>1.0</HeaderVersion>
+		<Sender>
+			<Identifier Authority="iso6523-actorid-upis">9933:test1</Identifier>
+		</Sender>
+		<Receiver>
+			<Identifier Authority="iso6523-actorid-upis">9933:test1</Identifier>
+		</Receiver>
+		<DocumentIdentification>
+			<Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2
+			</Standard>
+			<TypeVersion>1</TypeVersion>
+			<InstanceIdentifier>627a2e9a-a146-461f-b62f-f22f5799fd55
+			</InstanceIdentifier>
+			<Type>Invoice</Type>
+			<CreationDateAndTime>2017-06-08T00:00:00.000+03:00
+			</CreationDateAndTime>
+		</DocumentIdentification>
+		<Manifest>
+			<NumberOfItems>1</NumberOfItems>
+			<ManifestItem>
+				<MimeTypeQualifierCode>maniTypeQualCode</MimeTypeQualifierCode>
+				<UniformResourceIdentifier>uniformResourceIdentifier
+				</UniformResourceIdentifier>
+				<Description>manifestDescr</Description>
+				<LanguageCode> manifestLanguage</LanguageCode>
+			</ManifestItem>
+		</Manifest>
+		<BusinessScope>
+			<Scope>
+				<Type>PROCESSID</Type>
+				<InstanceIdentifier>Instance</InstanceIdentifier>
+				<Identifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::
+					Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:
+					www.peppol.eu:bis:peppol4a:ver2.0::2.1</Identifier>
+			</Scope>
+			<Scope>
+				<Type>DOCUMENTID</Type>
+				<InstanceIdentifier>Instance</InstanceIdentifier>
+				<Identifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::
+					Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:
+					www.peppol.eu:bis:peppol4a:ver2.0::2.1</Identifier>
+			</Scope>
+		</BusinessScope>
+	</StandardBusinessDocumentHeader>
+</StandardBusinessDocument>
+

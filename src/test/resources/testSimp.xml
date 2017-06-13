@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <config>
+        <Request name="ValidateEmailRequest">
+            <requestqueue>emailrequest</requestqueue>
+            <responsequeue>emailresponse</responsequeue>
+        </Request>
+        <Request name="CleanEmail">
+            <requestqueue>Cleanrequest</requestqueue>
+            <responsequeue>Cleanresponse</responsequeue>
+        </Request>
+    </config>

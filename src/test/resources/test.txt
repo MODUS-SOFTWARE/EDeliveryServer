@@ -1,0 +1,2 @@
+A test document to be send and received from an
+ SBB - CIPA Backend Connector with AP and SMP
