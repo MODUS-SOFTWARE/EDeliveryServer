@@ -232,3 +232,44 @@ SET ANSI_PADDING OFF
 GO
 
 
+
+CREATE TABLE [edeliveryserver].[BSD](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[message_unique_id]  [varchar](255) NOT NULL,
+	[sender_id] [int] NOT NULL,
+	[receiver_id] [int] NOT NULL,
+	[di_standard] [varchar](255) NOT NULL,
+	[di_type_version] [varchar](255) NOT NULL,
+	[di_id] [varchar](255) NOT NULL,
+	[di_type] [varchar](255) NOT NULL,
+	[di_creatiom_time] [datetime] NOT NULL,
+	[man_type] [varchar](255) NOT NULL,
+	[man_uni] [varchar](255) NOT NULL,
+	[man_descr] [varchar](255) NOT NULL,
+	[man_lang] [varchar](255) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+CREATE TABLE [edeliveryserver].[BSD_SCOPE](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[sc_type][varchar](255) NOT NULL,
+	[sc_id][varchar](255) NOT NULL,
+	[sc_instance][varchar](500) NOT NULL
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+CREATE TABLE [edeliveryserver].[BSD_HAS_SCOPE](
+	[sbd_id] [int] IDENTITY(1,1) NOT NULL,
+	[scope_id][varchar](255) NOT NULL
+) ON [PRIMARY]
+

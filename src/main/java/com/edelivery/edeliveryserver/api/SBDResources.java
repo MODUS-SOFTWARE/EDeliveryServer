@@ -32,8 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.edelivery.edeliveryserver.utils.EdeliveryUtils;
-
+import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.modus.edeliveryclient.EDeliveryClient;
 
 /**
@@ -48,7 +47,7 @@ import com.modus.edeliveryclient.EDeliveryClient;
 @ApplicationScoped
 public class SBDResources {
 	
-	EdeliveryUtils edeliveryUtils;
+	EdeliveryBS edeliveryUtils;
 	public SBDResources(){
 		/*	EdeliveryDatasource eds ;
     		DocumentSendHandler docSendHd;
@@ -65,7 +64,7 @@ public class SBDResources {
 		
 	}
 	@Inject
-	public SBDResources(EdeliveryUtils edeliveryUtils){
+	public SBDResources(EdeliveryBS edeliveryUtils){
 		this.edeliveryUtils=edeliveryUtils;
 	}
 
@@ -148,9 +147,9 @@ public class SBDResources {
     	
 			
     		if(this.edeliveryUtils==null){
-    			this.edeliveryUtils = new EdeliveryUtils();
+    			this.edeliveryUtils = new EdeliveryBS();
     		}
-    		this.edeliveryUtils.sendNextSBD(); 
+    		this.edeliveryUtils.sendSBD(); 
     	}
     	catch(Exception ex){
     		ex.printStackTrace();

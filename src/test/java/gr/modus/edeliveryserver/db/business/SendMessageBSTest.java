@@ -1,29 +1,34 @@
-package gr.modus.edeliveryserver.db;
+package gr.modus.edeliveryserver.db.business;
 
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.edelivery.edeliveryserver.business.SendMessageBS;
+import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
+import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
+import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
+import com.google.gson.Gson;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
-import gr.modus.edeliveryclient.SendDBTest;
+import gr.modus.edeliveryserver.db.MessageSendHandlerTest;
 
-public class DocumentSendDBTest {
-	private static final Logger log = Logger.getLogger(SendDBTest.class.getName());
+public class SendMessageBSTest {
+	private static final Logger log = Logger.getLogger(SendMessageBSTest.class.getName());
 	private BasicDataSource ds = new BasicDataSource();
-	
+	MessageSendHandlerDB messageHandler; 
+	MessageSendToAp messageSendToAp = new MessageSendToAp();
 	DocumentsSend docSend = new DocumentsSend();
-	
-	DocumentSendHandlerDB dhan;
+	SendMessageBS bs;
+	ConnectionWrapper connWrapper;
+	DocumentSendHandlerDB   docSendHandler;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -37,6 +42,8 @@ public class DocumentSendDBTest {
         ds.setMaxIdle(5);
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
+        
+        
         String actualDocumentFilepath = "F:/testDocument/pdf/d_ok_imi.pdf";
         docSend.setActualDocumentFilepath(actualDocumentFilepath);
         docSend.setDocId(55132);
@@ -50,9 +57,15 @@ public class DocumentSendDBTest {
         DocumentStatus docStatus = new DocumentStatus();
         docStatus.setId(1);
         docSend.setDocumentStatus(docStatus);
+        
+        
+        messageSendToAp.setMessageUniqueId("c97f125e-d5d1-4407-bd00-ee309628e58a");
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);
-        dhan = new DocumentSendHandlerDB();
+        connWrapper = new ConnectionWrapper(eds);
+        messageHandler = new MessageSendHandlerDB(connWrapper);
+        docSendHandler = new DocumentSendHandlerDB(connWrapper);
+        bs = new SendMessageBS(connWrapper, docSendHandler , messageHandler);
         
         
 	}
@@ -61,7 +74,15 @@ public class DocumentSendDBTest {
 	
 	@Test
 	public void insertSend() throws SQLException{
-		dhan.insert(docSend);
+		bs.insertMessage2Send(docSend);
 	}
+	
+	
+	@Test
+	public void selectNext() throws SQLException{
+		DocumentsSend docSend = bs.selectNextById();
+		System.out.println(new Gson().toJson(docSend));
+	}
+	
 	
 }

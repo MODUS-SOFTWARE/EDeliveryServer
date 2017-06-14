@@ -15,8 +15,8 @@ import javax.sql.DataSource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
-import com.edelivery.edeliveryserver.utils.EdeliveryUtils;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 
@@ -39,7 +39,7 @@ public class SendPoller {
 	EdeliverySettings settings;
 
 	@Inject
-	EdeliveryUtils edeliveryUtils;
+	EdeliveryBS edeliveryUtils;
 
 	@Inject
 	EdeliveryDatasource edatasource;
@@ -101,9 +101,9 @@ public class SendPoller {
 		try {
 
 			if (this.edeliveryUtils == null) {
-				this.edeliveryUtils = new EdeliveryUtils();
+				this.edeliveryUtils = new EdeliveryBS();
 			}
-			this.edeliveryUtils.sendNextSBD();
+			this.edeliveryUtils.sendSBD();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();

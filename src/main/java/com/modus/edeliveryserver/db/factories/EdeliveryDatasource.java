@@ -21,4 +21,8 @@ public class EdeliveryDatasource {
 	public Connection getConnection() throws SQLException{
 		return edeliveryDatasource.getConnection();
 	}
+	
+	public void closeConnection() throws SQLException{
+		edeliveryDatasource.getConnection().close();
+	}
 }

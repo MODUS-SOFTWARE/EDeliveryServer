@@ -37,27 +37,11 @@ import javax.ws.rs.InternalServerErrorException;
 public class EDeliveryServerConfiguration {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
-
     private String windowsDocPath;
     private String unixDocPath;
-
     private String workingPath;
-
     private ResourceBundle EDeliveryServerProperties;
-
     private File file;
-    
-    //Βάζω όλα τα settings σε μια κλάση. 
-    //private EdeliverySettings settings;//Μάλλον δεν χρειάζεται.
-    
-    /*public EdeliverySettings getSettings() {
-		return settings;
-	}
-
-	public void setSettings(EdeliverySettings settings) {
-		this.settings = settings;
-	}*/
-
 	public EDeliveryServerConfiguration(){}
 
     @PostConstruct
@@ -126,5 +110,23 @@ public class EDeliveryServerConfiguration {
     public String getConnector(){
     	return this.EDeliveryServerProperties.getString("connector");
     	
+    }
+    
+    public String getESensConfigFilename(){
+    	return this.EDeliveryServerProperties.getString("eSensConfigFilename");
+    }
+    
+    
+    public String getSenderName(){
+    	return this.EDeliveryServerProperties.getString("senderName");
+    }
+    
+    public String getSenderEmail(){
+    	return this.EDeliveryServerProperties.getString("senderEmail");
+    }
+    
+    
+    public String getSamSenderId(){
+    	return this.EDeliveryServerProperties.getString("samSenderId");
     }
 }

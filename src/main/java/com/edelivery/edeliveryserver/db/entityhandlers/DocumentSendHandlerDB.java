@@ -8,22 +8,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
-@ApplicationScoped
-public class DocumentSendHandler {
-	private static final Logger LOGGER = Logger.getLogger( DocumentSendHandler.class.getName() );
-	EdeliveryDatasource ds;
+@RequestScoped
+public class DocumentSendHandlerDB {
+	private static final Logger LOGGER = Logger.getLogger( DocumentSendHandlerDB.class.getName() );
+	ConnectionWrapper connWrapper;
 
-	public DocumentSendHandler() {
+	public DocumentSendHandlerDB() {
 	}
 
 	@Inject
-	public DocumentSendHandler(EdeliveryDatasource ds) {
-		this.ds = ds;
+	public DocumentSendHandlerDB(ConnectionWrapper connWrapper) {
+		this.connWrapper = connWrapper;
 	}
 	// TODO make it with entity manager.
 
@@ -41,7 +42,7 @@ public class DocumentSendHandler {
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
 				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE message_id = ?  ";
 
-		try (PreparedStatement preparedStatement = ds.getConnection().prepareStatement(query);) {
+		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
 			preparedStatement.setInt(1, message_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
@@ -66,7 +67,7 @@ public class DocumentSendHandler {
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
 				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE docId = ?  ";
 
-		try (PreparedStatement preparedStatement = ds.getConnection().prepareStatement(query);) {
+		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
 			preparedStatement.setInt(1, message_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
@@ -93,7 +94,7 @@ public class DocumentSendHandler {
 				+ "inner join edeliveryserver.message_send_to_ap  b on   b.message_unique_id = a.message_unique_id "
 				+ " ORDER BY b.id  ";
 
-		try (PreparedStatement preparedStatement = ds.getConnection().prepareStatement(query);) {
+		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
 					docSend = map(resultSet);
@@ -131,7 +132,7 @@ public class DocumentSendHandler {
 				",message_unique_id,referenced_document_unique_id,document_status\r\n)" + "values (?,?,?,?,?"
 				+ ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?" + ")";
 		LOGGER.log(Level.INFO,sql);
-		try (PreparedStatement preparedStatement = ds.getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
+		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getActualDocumentFilepath());
 			preparedStatement.setInt(2, input.getDocId());
 			long acceptedPeriod = input.getDocumentAcceptancePeriod() == null ? 0
