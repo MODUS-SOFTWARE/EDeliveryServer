@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.modus</groupId>
 			<artifactId>EDeliveryClient</artifactId>
-			<version> 1.5</version>
+			<version> 1.7</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 

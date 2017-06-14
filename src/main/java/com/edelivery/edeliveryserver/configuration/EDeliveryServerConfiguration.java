@@ -44,10 +44,9 @@ public class EDeliveryServerConfiguration {
     private File file;
 	public EDeliveryServerConfiguration(){}
 
-    @PostConstruct
-    public void Properties() {
-
-        EDeliveryServerProperties = ResourceBundle.getBundle("EDeliveryServer", Locale.ENGLISH);
+	
+	public void load(){
+		EDeliveryServerProperties = ResourceBundle.getBundle("EDeliveryServer", Locale.ENGLISH);
 
         if (OS.contains("win")) {
             this.workingPath = EDeliveryServerProperties.getString("windowsfilepath");
@@ -66,6 +65,11 @@ public class EDeliveryServerConfiguration {
                 throw new InternalServerErrorException("Server Doesn't have right to save files received, Please give permitions to " + workingPath);
             }
         }
+	}
+    @PostConstruct
+    public void Properties() {
+    	load();
+        
 
     }
 

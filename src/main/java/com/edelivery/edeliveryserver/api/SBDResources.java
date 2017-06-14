@@ -149,7 +149,7 @@ public class SBDResources {
     		if(this.edeliveryUtils==null){
     			this.edeliveryUtils = new EdeliveryBS();
     		}
-    		this.edeliveryUtils.sendSBD(); 
+    		//this.edeliveryUtils.sendSBD(); TODO  
     	}
     	catch(Exception ex){
     		ex.printStackTrace();

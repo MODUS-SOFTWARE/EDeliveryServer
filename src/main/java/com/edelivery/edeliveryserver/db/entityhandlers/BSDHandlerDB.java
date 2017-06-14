@@ -70,7 +70,7 @@ public class BSDHandlerDB {
 		sbd.setMan_lang("manifestLanguage");
 		sbd.setMan_uni(message_id); //TODO unique
 		sbd.setMan_type("maniTypeQualCode");
-		
+		sbd.setMan_uni("uniformResourceIdentifier");
 		Scope s1 = new Scope(); s1.setId(1);
 		s1.setSc_id("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2:: Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn: www.peppol.eu:bis:peppol4a:ver2.0::2.1");
 		s1.setSc_instance("Instance");

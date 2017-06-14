@@ -15,10 +15,10 @@ import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
-import gr.modus.edeliveryclient.SendDBTest;
+import gr.modus.edeliveryclient.EdeliveryClientTest;
 
 public class DocumentSendDBTest {
-	private static final Logger log = Logger.getLogger(SendDBTest.class.getName());
+	private static final Logger log = Logger.getLogger(EdeliveryClientTest.class.getName());
 	private BasicDataSource ds = new BasicDataSource();
 	
 	DocumentsSend docSend = new DocumentsSend();

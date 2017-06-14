@@ -108,6 +108,7 @@ public class DocumentSendHandlerDB {
 		DocumentsSend docSend = new DocumentsSend();
 		docSend.setId(resultSet.getInt("id"));
 		docSend.setMessageId(resultSet.getInt("message_id"));
+		docSend.setMessageUniqueId(resultSet.getString("message_unique_id"));
 		docSend.setDocumentDescription(resultSet.getString("document_description"));
 		docSend.setDocumentTitle(resultSet.getString("document_title"));
 		docSend.setDocumentType(resultSet.getString("document_type"));

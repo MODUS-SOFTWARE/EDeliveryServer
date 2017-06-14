@@ -4,10 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
@@ -17,25 +18,25 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
+import com.edelivery.edeliveryserver.db.entityhandlers.BSDHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.BSDMessage;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.modus.edeliveryclient.EDeliveryClient;
 import com.modus.edeliveryclient.EDeliveryClientImplementation;
 import com.modus.edeliveryclient.consumer.SbdConsumer;
 import com.modus.edeliveryclient.consumer.SmpParticipantConsumer;
 import com.modus.edeliveryclient.models.Authorization;
+import com.modus.edeliveryclient.models.ResponseMessage;
 import com.modus.edeliveryclient.models.SBDParams;
 import com.modus.edeliveryclient.serialize.Serializer;
-//import com.modus.edeliveryclient.serializer.JacksonSerializer;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
-
 import gr.modus.edelivery.adapter.messages.MessageParams;
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
-import gr.modus.edelivery.pollers.SendPoller;
+
 
 @RequestScoped
 public class EdeliveryBS {
@@ -53,13 +54,13 @@ public class EdeliveryBS {
 	String password = "sp1";
 	Authorization auth;
 	EDeliveryClient deliveryClient;
-
+	BSDHandlerDB bsdHandler;
 	public EdeliveryBS() {
 	}
 
 	@Inject
 	public EdeliveryBS(ConnectionWrapper conWrapper, DocumentSendHandlerDB docSendHd, DocumentServerClient docClient,
-			EDeliveryServerConfiguration eDeliveryServerConfiguration) {
+			EDeliveryServerConfiguration eDeliveryServerConfiguration,BSDHandlerDB bsdHandler) {
 		this.conWrapper = conWrapper;
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
@@ -71,6 +72,7 @@ public class EdeliveryBS {
 		deliveryClient = new EDeliveryClientImplementation(httpClient, serializer,
 				new SmpParticipantConsumer(httpClient, serializer, basepath),
 				new SbdConsumer(httpClient, serializer, basepath));
+		this.bsdHandler = bsdHandler;
 	}
 
 	/**
@@ -117,11 +119,18 @@ public class EdeliveryBS {
 	 * @throws DatatypeConfigurationException
 	 * @throws JAXBException
 	 * @throws MalformedURLException
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
 	public void sendSBD(DocumentsSend docSend)
-			throws MalformedURLException, JAXBException, DatatypeConfigurationException {
-		SBDParams sbdParams = new SBDParams();
-
+			throws MalformedURLException, JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException {
+		
+		SBDParams sbdParams;
+		BSDMessage sbdMsg = bsdHandler.select(docSend.getMessageUniqueId());
+		sbdParams = bsdObj2bsdParams(sbdMsg);
+		
+		
+		
 		MessageParams params = new MessageParams();
 		params.seteSensConfigFilename(this.eDeliveryServerConfiguration.getESensConfigFilename());
 		params.setOriginatorName(eDeliveryServerConfiguration.getSenderName());
@@ -135,7 +144,8 @@ public class EdeliveryBS {
 		params.setNormalizedDocComments(docSend.getDocumentComments());
 		params.setSamSenderId(eDeliveryServerConfiguration.getSamSenderId());
 
-		deliveryClient.sendMessage(sbdParams, params, auth);
+		CompletableFuture<ResponseMessage> responseC = deliveryClient.sendMessage(sbdParams, params, auth);
+		LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
 		LOG.log(Level.INFO, "message send");
 	}
 
@@ -147,9 +157,24 @@ public class EdeliveryBS {
 	
 	public static SBDParams  bsdObj2bsdParams(BSDMessage msg){
 		SBDParams sbdParams = new SBDParams();
-		sbdParams.setHeaderVersion(1);
-		sbdParams.set
+		sbdParams.setHeaderVersion(1.0f);
+		sbdParams.setDocTypeVersion(1); //TODO
+		sbdParams.setDocumentIdStandard(msg.getDi_standard());
+		sbdParams.setDocumentInstanceIdentifier(msg.getDi_id());
+		sbdParams.setDocumentType(msg.getDi_type());
+		sbdParams.setManifestDescr(msg.getMan_descr());
+		sbdParams.setManifestLanguage(msg.getMan_lang());
+		sbdParams.setManiTypeQualCode(msg.getMan_type());
+		sbdParams.setUniformResourceIdentifier(msg.getMan_uni());
+		sbdParams.setParticipantIdentifierReceiverScheme(msg.getReceiver().getParticipantIdentifierScheme());
+		sbdParams.setParticipantIdentifierReceiverValue(msg.getReceiver().getParticipantIdentifierValue());
+		sbdParams.setParticipantIdentifierSenderScheme(msg.getSender().getParticipantIdentifierScheme());
+		sbdParams.setParticipantIdentifierSenderValue(msg.getSender().getParticipantIdentifierValue());
+		sbdParams.setScopeIdentifier(msg.getBsdScope().get(0).getSc_id());
+		sbdParams.setScopeType(msg.getBsdScope().get(0).getSc_type());
 		
+		sbdParams.setScopeIdentifier2(msg.getBsdScope().get(1).getSc_id());
+		sbdParams.setScopeType2(msg.getBsdScope().get(1).getSc_type());
 		return sbdParams;
 	}
 }

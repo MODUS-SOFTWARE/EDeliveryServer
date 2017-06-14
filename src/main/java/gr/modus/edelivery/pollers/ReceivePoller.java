@@ -88,7 +88,7 @@ public class ReceivePoller {
 			if (this.edeliveryUtils == null) {
 				this.edeliveryUtils = new EdeliveryBS();
 			}
-			this.edeliveryUtils.sendSBD();
+			//this.edeliveryUtils.sendSBD(); TODO 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
