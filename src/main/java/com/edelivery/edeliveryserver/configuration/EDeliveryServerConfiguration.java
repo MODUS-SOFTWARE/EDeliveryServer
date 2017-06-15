@@ -82,7 +82,7 @@ public class EDeliveryServerConfiguration {
     }
     
     public int getEdeliveryUser(){
-    	return Integer.parseInt(this.EDeliveryServerProperties.getString("edeliveryUsers"));
+    	return Integer.parseInt(this.EDeliveryServerProperties.getString("edeliveryUser"));
     }
     
     

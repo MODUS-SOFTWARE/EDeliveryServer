@@ -59,8 +59,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "DocumentsReceived.findByDocumentAuthorityApplicant", query = "SELECT d FROM DocumentsReceived d WHERE d.documentAuthorityApplicant = :documentAuthorityApplicant")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentOrganizationApplicant", query = "SELECT d FROM DocumentsReceived d WHERE d.documentOrganizationApplicant = :documentOrganizationApplicant")})
 public class DocumentsReceived implements Serializable {
+	private Integer docId;
+	
+    public Integer getDocId() {
+		return docId;
+	}
 
-    private static final long serialVersionUID = 1L;
+	public void setDocId(Integer docId) {
+		this.docId = docId;
+	}
+
+	private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull

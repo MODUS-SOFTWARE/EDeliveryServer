@@ -95,7 +95,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [edeliveryserver].[documents_received](
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[actual_document_filepath] [varchar](255) NULL,
 	[docId] [int] NULL,
 	[document_acceptance_period] [datetime2](7) NULL,
@@ -121,6 +121,7 @@ CREATE TABLE [edeliveryserver].[documents_received](
 	[referenced_document_unique_id] [varchar](255) NULL,
 	[document_status] [int] NULL
 ) ON [PRIMARY]
+
 
 GO
 

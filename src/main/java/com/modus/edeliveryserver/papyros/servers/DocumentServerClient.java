@@ -16,19 +16,23 @@ import JavaPapyrusR6ServerApi.Errors;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
+import com.google.gson.Gson;
 
 
 
@@ -39,7 +43,7 @@ import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
  */
 @ApplicationScoped
 public class DocumentServerClient {
-    
+	private static final Logger LOG = Logger.getLogger(DocumentServerClient.class.getName());
 	 
 	EDeliveryServerConfiguration eDeliveryServerConfiguration;
 	
@@ -219,6 +223,43 @@ public class DocumentServerClient {
     }
     
     
+    
+    
+    public  DocumentApi insertCall(int userId, String filename, String fileDescription, File file)
+			throws FileNotFoundException, DSException {
+
+    	DocumentApi docApi = new DocumentApi();
+		FileInputStream fin = null;
+		try {
+			fin = new FileInputStream(file);
+			docApi = insertCall(userId, filename, fileDescription, fin);
+		} finally {
+			if (fin != null) {
+				try {
+					fin.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return docApi;
+	}
+    
+    
+    public  DocumentApi insertCall(int userId, String filename, String fileDescription, InputStream inStream) throws DSException {
+
+    	DocumentServices df = new DocumentServices(this.eDeliveryServerConfiguration.getPapyrosServersHost() , this.eDeliveryServerConfiguration.getDocumentServerPort());		WMTErrRetType errorLoc = new WMTErrRetType(Errors.WM_SUCCESS, Errors.WMS_SUCCESS);
+		errorLoc = df.InsertDocument(userId, filename, fileDescription, inStream, 0);// Κάνει
+																						// init
+																						// εσωτερικά
+
+		DocumentApi docApi = new DocumentApi();
+		throwDSError(errorLoc,"insertCall");
+		docApi.setId(df.getDocId());
+		LOG.log(Level.INFO,new Gson().toJson(docApi));
+		errorLoc.setDoc(docApi);
+		return docApi;
+	}
     
 
 }
