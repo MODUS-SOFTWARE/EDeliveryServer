@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response.Status;
 
 import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
+import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 
@@ -44,6 +46,9 @@ public class SendPoller {
 	@Inject
 	EdeliveryDatasource edatasource;
 
+	@Inject
+	DocumentSendHandlerDB   docSendHandler;
+	
 	@PostConstruct
 	private void construct() throws Exception {
 		init();
@@ -104,13 +109,15 @@ public class SendPoller {
 				this.edeliveryUtils = new EdeliveryBS();
 			}
 			//this.edeliveryUtils.sendSBD(); TODO
+			DocumentsSend docSend = docSendHandler.selectNextById();
+			this.edeliveryUtils.sendSBD(docSend);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(60000);
 		} catch (InterruptedException ex) {
 			LOG.log(Level.INFO, null, ex);
 		}

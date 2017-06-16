@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -68,8 +70,8 @@ public class EdeliveryBS {
 	AsyncHttpClient httpClient;
 	Serializer serializer;
 	String basepath = "http://192.168.20.10:8080/APREST";
-	String user = "sp1";
-	String password = "sp1";
+	String user = "";
+	String password = "";
 	Authorization auth;
 	EDeliveryClient deliveryClient;
 	BSDHandlerDB bsdHandler;
@@ -82,10 +84,19 @@ public class EdeliveryBS {
 			EDeliveryServerConfiguration eDeliveryServerConfiguration,BSDHandlerDB bsdHandler
 			,DocumentReceivedHandlerDB docReceivedHandler
 			) {
+		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
+		this.user=this.eDeliveryServerConfiguration.getConnectorUser();
+		this.password=this.eDeliveryServerConfiguration.getConnectorPassword();
 		this.conWrapper = conWrapper;
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
-		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
+		
+		/*
+		 * 
+		 * */
+		
+		
+		
 		this.httpClient = new DefaultAsyncHttpClient();
 		this.serializer = new com.modus.edeliveryserver.serializer.JacksonSerializer(new ObjectMapper());
 		basepath = eDeliveryServerConfiguration.getConnector();
@@ -95,6 +106,7 @@ public class EdeliveryBS {
 				new SbdConsumer(httpClient, serializer, basepath));
 		this.bsdHandler = bsdHandler;
 		this.docReceivedHandler = docReceivedHandler;
+		
 	}
 
 	/**

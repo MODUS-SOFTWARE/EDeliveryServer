@@ -133,4 +133,12 @@ public class EDeliveryServerConfiguration {
     public String getSamSenderId(){
     	return this.EDeliveryServerProperties.getString("samSenderId");
     }
+    
+    
+    public String getConnectorUser(){
+    	return this.EDeliveryServerProperties.getString("connectorUser");
+    }
+    public String getConnectorPassword(){
+    	return this.EDeliveryServerProperties.getString("connectorPassword");
+    }
 }

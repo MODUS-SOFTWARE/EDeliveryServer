@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.edelivery.edeliveryserver.business.EdeliveryBS;
+import com.edelivery.edeliveryserver.business.SecurityBs;
 import com.edelivery.edeliveryserver.business.SendMessageBS;
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.entityhandlers.BSDHandlerDB;
@@ -80,8 +81,8 @@ public class EdeliveryClientTest {
 
 		msg2Get = new MessageReceivedFromAp();
 		msg2Get.setId(1);
-		msg2Get.setMessageUniqueId("9933_test1-20170614112334473@local_delivery");
-		
+		msg2Get.setMessageUniqueId("9933_test1-20170615174112140@local_delivery");
+		//SecurityBs.doTrustToCertificates();
 	}
 
 	
