@@ -84,7 +84,7 @@ public class EdeliveryClientTest {
 
 		msg2Get = new MessageReceivedFromAp();
 		msg2Get.setId(1);
-		msg2Get.setMessageUniqueId("9933_test1-20170619123110059@local_delivery");
+		msg2Get.setMessageUniqueId("9933_test1-20170619153632670@local_delivery");
 		//SecurityBs.doTrustToCertificates();
 	}
 
