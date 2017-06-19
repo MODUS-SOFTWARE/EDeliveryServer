@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author pantelispanka
  */
-@Entity
+
 @Table(name = "documents_received", catalog = "edeliveryserver", schema = "edeliveryserver")
 @XmlRootElement
 @NamedQueries({

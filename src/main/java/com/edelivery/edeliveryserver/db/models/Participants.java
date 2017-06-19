@@ -21,30 +21,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author pantelispanka
  */
-@Entity
-@Table(catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Participants.findAll", query = "SELECT p FROM Participants p")
-    , @NamedQuery(name = "Participants.findById", query = "SELECT p FROM Participants p WHERE p.id = :id")
-    , @NamedQuery(name = "Participants.findByParticipantIdentifierValue", query = "SELECT p FROM Participants p WHERE p.participantIdentifierValue = :participantIdentifierValue")
-    , @NamedQuery(name = "Participants.findByParticipantIdentifierScheme", query = "SELECT p FROM Participants p WHERE p.participantIdentifierScheme = :participantIdentifierScheme")})
 public class Participants implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
-    @Column(name = "participant_identifier_value")
     private String participantIdentifierValue;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
-    @Column(name = "participant_identifier_scheme")
     private String participantIdentifierScheme;
 
     public Participants() {

@@ -10,6 +10,8 @@ import javax.annotation.PreDestroy;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import javax.sql.DataSource;
@@ -112,22 +114,23 @@ public class SendPoller {
 	
 	
 	
-
+	
+	@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 	public void action() {
-		Connection conn = null;
+		//Connection conn = null;
 		try {
 
 			
-			conn = this.connWrapper.getConnection();
+			//conn = this.connWrapper.getConnection();
 			
 			
 			if (this.edeliveryUtils == null) {
 				this.edeliveryUtils = new EdeliveryBS();
 			}
 			//this.edeliveryUtils.sendSBD(); TODO
-			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.QUEUED,conn);
+			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.QUEUED,null);
 			if(docSend!=null){
-				this.edeliveryUtils.sendSBD(docSend,conn);
+				this.edeliveryUtils.sendSBD(docSend,null);
 			}
 			
 		} catch (Exception ex) {
@@ -135,14 +138,14 @@ public class SendPoller {
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 		finally{
-			if(conn !=null ){
+			/*if(conn !=null ){
 				try{
 					conn.close();
 				}
 				catch(Exception ex){
 					ex.printStackTrace();
 				}
-			}
+			}*/
 		}
 
 		try {

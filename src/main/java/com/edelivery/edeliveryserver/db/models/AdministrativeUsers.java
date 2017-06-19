@@ -23,25 +23,12 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author pantelispanka
  */
-@Entity
-@Table(name = "administrative_users", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "AdministrativeUsers.findAll", query = "SELECT a FROM AdministrativeUsers a")
-    , @NamedQuery(name = "AdministrativeUsers.findById", query = "SELECT a FROM AdministrativeUsers a WHERE a.id = :id")
-    , @NamedQuery(name = "AdministrativeUsers.findByUsername", query = "SELECT a FROM AdministrativeUsers a WHERE a.username = :username")})
 public class AdministrativeUsers implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
     private String username;
-    @OneToMany(mappedBy = "ownedBy")
+    
     private Collection<AdministrativeUsersPasswords> administrativeUsersPasswordsCollection;
 
     public AdministrativeUsers() {
@@ -72,7 +59,7 @@ public class AdministrativeUsers implements Serializable {
         this.username = username;
     }
 
-    @XmlTransient
+
     public Collection<AdministrativeUsersPasswords> getAdministrativeUsersPasswordsCollection() {
         return administrativeUsersPasswordsCollection;
     }

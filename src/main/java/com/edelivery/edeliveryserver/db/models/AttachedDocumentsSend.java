@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author pantelispanka
  */
-@Entity
+
 @Table(name = "attached_documents_send", catalog = "edeliveryserver", schema = "edeliveryserver")
 @XmlRootElement
 @NamedQueries({

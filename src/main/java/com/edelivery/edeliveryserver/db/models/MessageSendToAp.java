@@ -23,28 +23,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author pantelispanka
  */
-@Entity
-@Table(name = "message_send_to_ap", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "MessageSendToAp.findAll", query = "SELECT m FROM MessageSendToAp m")
-    , @NamedQuery(name = "MessageSendToAp.findById", query = "SELECT m FROM MessageSendToAp m WHERE m.id = :id")
-    , @NamedQuery(name = "MessageSendToAp.findByMessageUniqueId", query = "SELECT m FROM MessageSendToAp m WHERE m.messageUniqueId = :messageUniqueId")})
+
 public class MessageSendToAp implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
-    @Column(name = "message_unique_id")
     private String messageUniqueId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
     private DocumentsReceived documentsReceived;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
     private DocumentsSend documentsSend;
 
     public MessageSendToAp() {

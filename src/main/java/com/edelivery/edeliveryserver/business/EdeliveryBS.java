@@ -191,12 +191,11 @@ public class EdeliveryBS {
 			LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
 			LOG.log(Level.INFO, "message send");
 			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()));
-			docSendHd.updateStatus(docSend, conn);
+			docSendHd.updateStatus(docSend, null);
 		}
 		finally{
-			if(conn==null){
-				conn = this.connWrapper.getConnection();
-				closeConnection=true;
+			if(conn!=null && closeConnection){
+				conn.close();
 			}
 		}
 		

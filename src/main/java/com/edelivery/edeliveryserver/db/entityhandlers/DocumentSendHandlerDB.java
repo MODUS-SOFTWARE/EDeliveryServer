@@ -105,6 +105,7 @@ public class DocumentSendHandlerDB {
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = this.connWrapper.getConnection();
+			conn.setAutoCommit(true);
 			closeConnection = true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
