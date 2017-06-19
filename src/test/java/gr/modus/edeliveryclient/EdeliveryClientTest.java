@@ -2,6 +2,7 @@ package gr.modus.edeliveryclient;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.google.gson.Gson;
@@ -67,10 +69,11 @@ public class EdeliveryClientTest {
         connWrapper = new ConnectionWrapper(eds);
         messageHandler = new MessageSendHandlerDB(connWrapper);
         docSendHandler = new DocumentSendHandlerDB(connWrapper);
-        bs = new SendMessageBS(connWrapper, docSendHandler , messageHandler);
+        bs = new SendMessageBS( docSendHandler , messageHandler ,connWrapper);
         bsdHandler = new BSDHandlerDB(connWrapper);
-        
-        docSend = bs.selectNextById();
+        try(Connection conn = connWrapper.getConnection()){
+        	docSend = bs.selectNextById(DocumentStatuses.QUEUED,conn);
+        }
 		System.out.println(new Gson().toJson(docSend));
 		
 		eDeliveryServerConfiguration = new EDeliveryServerConfiguration();
@@ -86,10 +89,11 @@ public class EdeliveryClientTest {
 	}
 
 	
-	@Test
+	
 	public void testSendMessage(){
-		try {
-			edelBS.sendSBD(docSend);
+		
+		try(Connection conn = this.connWrapper.getConnection() ) {
+			edelBS.sendSBD(docSend,conn);
 			System.out.println("end");
 			
 		} catch (MalformedURLException e) {
@@ -107,6 +111,9 @@ public class EdeliveryClientTest {
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	} 
@@ -114,8 +121,8 @@ public class EdeliveryClientTest {
 	
 	@Test
 	public void testReceiveMessage() throws XPathExpressionException{
-		try {
-			edelBS.receiveSBD(msg2Get);
+		try(Connection conn = this.connWrapper.getConnection()) {
+			edelBS.receiveSBD(msg2Get,conn);
 			System.out.println("end");
 			
 		} catch (MalformedURLException e) {

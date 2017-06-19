@@ -1,5 +1,6 @@
 package gr.modus.edeliveryserver.db.business;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -13,12 +14,14 @@ import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.google.gson.Gson;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 import gr.modus.edeliveryserver.db.MessageSendHandlerTest;
+
 
 public class SendMessageBSTest {
 	private static final Logger log = Logger.getLogger(SendMessageBSTest.class.getName());
@@ -65,23 +68,42 @@ public class SendMessageBSTest {
         connWrapper = new ConnectionWrapper(eds);
         messageHandler = new MessageSendHandlerDB(connWrapper);
         docSendHandler = new DocumentSendHandlerDB(connWrapper);
-        bs = new SendMessageBS(connWrapper, docSendHandler , messageHandler);
+        bs = new SendMessageBS( docSendHandler , messageHandler,connWrapper);
         
         
 	}
 	
 	
 	
-	@Test
+	
 	public void insertSend() throws SQLException{
-		bs.insertMessage2Send(docSend);
+		Connection conn= null;
+		try{
+			conn = this.connWrapper.getConnection();
+			bs.insertMessage2Send(docSend,conn);
+		}
+		finally{
+			if(conn != null){
+				conn.close();
+			}
+		}
 	}
 	
 	
-	@Test
+	
 	public void selectNext() throws SQLException{
-		DocumentsSend docSend = bs.selectNextById();
-		System.out.println(new Gson().toJson(docSend));
+		Connection conn = null;
+		try{
+			conn = this.connWrapper.getConnection();
+			DocumentsSend docSend = bs.selectNextById(DocumentStatuses.QUEUED,conn);
+			System.out.println(new Gson().toJson(docSend));
+		}
+		finally{
+			if(conn != null){
+				conn.close();
+			}
+		}
+		
 	}
 	
 	

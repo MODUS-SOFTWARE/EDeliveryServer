@@ -21,7 +21,7 @@ public class EdeliveryDatasourceFactory {
 
 	@Inject
 	public EdeliveryDatasourceFactory(EDeliveryServerConfiguration config) {
-		config = config;
+		this.config = config;
 	}
 
 	@Produces
@@ -44,6 +44,7 @@ public class EdeliveryDatasourceFactory {
 		}  catch (Exception ex) {
 			// LOG.log(Level.SEVERE,"DataSource Exception "+new
 			// Gson().toJson(this.xmlSettings)+" "+ex.getMessage());
+			ex.printStackTrace();
 		}
 
 		return edatasource;

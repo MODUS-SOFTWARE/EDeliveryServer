@@ -5,16 +5,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 
-
+@RequestScoped
 public class MessageSendHandlerDB {
 	
 	private static final Logger LOGGER = Logger.getLogger( MessageSendHandlerDB.class.getName() );
 	ConnectionWrapper connWrapper;
 	public MessageSendHandlerDB() {
 	}
+	
 	@Inject
 	public MessageSendHandlerDB(ConnectionWrapper connWrapper) {
 		this.connWrapper = connWrapper;

@@ -1,5 +1,6 @@
 package com.edelivery.edeliveryserver.db.entityhandlers;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
@@ -28,7 +30,7 @@ public class DocumentSendHandlerDB {
 	}
 	// TODO make it with entity manager.
 
-	public DocumentsSend selectByMsgId(int message_id) throws SQLException {
+	public DocumentsSend selectByMsgId(int message_id, Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
 		String query = "SELECT id " + " ,actual_document_filepath " + " ,document_acceptance_period "
@@ -41,8 +43,12 @@ public class DocumentSendHandlerDB {
 				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
 				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE message_id = ?  ";
-
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
 			preparedStatement.setInt(1, message_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
@@ -50,12 +56,19 @@ public class DocumentSendHandlerDB {
 				}
 			}
 		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}
+		}
+		
 		return docSend;
 	}
 
-	public DocumentsSend selectByDocId(int message_id) throws SQLException {
+	public DocumentsSend selectByDocId(int message_id, Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
+		
 		String query = "SELECT id " + " ,actual_document_filepath " + " ,document_acceptance_period "
 				+ " ,document_authority_applicant " + " ,document_comments " + " ,document_description "
 				+ " ,document_etiquette_creation_date " + " ,document_issuing_authority "
@@ -66,8 +79,12 @@ public class DocumentSendHandlerDB {
 				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
 				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE docId = ?  ";
-
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
 			preparedStatement.setInt(1, message_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
@@ -75,10 +92,35 @@ public class DocumentSendHandlerDB {
 				}
 			}
 		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}	
+		}
+		
 		return docSend;
 	}
-
-	public DocumentsSend selectNextById() throws SQLException {
+	public DocumentsSend updateStatus(DocumentsSend data, Connection conn) throws SQLException{
+		String sql = "update edeliveryserver.documents_send set document_status = ?  where id = ?  ";
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection = true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
+			preparedStatement.setInt(1, data.getDocumentStatus().getId());
+			preparedStatement.setInt(2, data.getId());
+			preparedStatement.executeUpdate();
+		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}
+		}
+		return data;
+	} 
+	
+	public DocumentsSend selectNextById(DocumentStatuses status , Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
 		String query = "SELECT TOP 1  a.id " + " ,a.actual_document_filepath " + " ,a.document_acceptance_period "
@@ -92,13 +134,24 @@ public class DocumentSendHandlerDB {
 				+ " ,a.referenced_document_unique_id " + " ,a.document_status " + " ,a.docId "
 				+ " FROM edeliveryserver.edeliveryserver.documents_send  a  "
 				+ "inner join edeliveryserver.message_send_to_ap  b on   b.message_unique_id = a.message_unique_id "
+				+ "Where document_status = ? "
 				+ " ORDER BY b.id  ";
-
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(query);) {
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection = true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
+			preparedStatement.setInt(1, status.getValue());
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
 					docSend = map(resultSet);
 				}
+			}
+		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
 			}
 		}
 		return docSend;
@@ -122,7 +175,7 @@ public class DocumentSendHandlerDB {
 		return docSend;
 	}
 
-	public DocumentsSend insert(DocumentsSend input) throws SQLException {
+	public DocumentsSend insert(DocumentsSend input,Connection conn) throws SQLException {
 
 		String sql = "insert into edeliveryserver.documents_send (actual_document_filepath,docId,document_acceptance_period,document_authority_applicant,document_comments\r\n"
 				+ ",document_description,document_etiquette_creation_date,document_issuing_authority,document_issuing_organization,document_language\r\n"
@@ -133,7 +186,12 @@ public class DocumentSendHandlerDB {
 				",message_unique_id,referenced_document_unique_id,document_status\r\n)" + "values (?,?,?,?,?"
 				+ ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?" + ")";
 		LOGGER.log(Level.INFO,sql);
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
+		boolean closeConnection = false; 
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getActualDocumentFilepath());
 			preparedStatement.setInt(2, input.getDocId());
 			long acceptedPeriod = input.getDocumentAcceptancePeriod() == null ? 0
@@ -180,6 +238,12 @@ public class DocumentSendHandlerDB {
 
 			return input;
 		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}
+		}
+		
 	}
 
 }

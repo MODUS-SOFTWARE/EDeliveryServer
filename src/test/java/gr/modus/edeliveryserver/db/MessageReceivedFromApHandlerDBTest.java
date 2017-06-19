@@ -63,7 +63,7 @@ public class MessageReceivedFromApHandlerDBTest {
 	
 	
 	
-	@Test
+	
 	public void selectMsgGet() throws SQLException{
 		List<MessageReceivedFromAp>  msg2Get = handler.select(messageReceivedFromApList);
 		System.out.println(new Gson().toJson(msg2Get));

@@ -1,5 +1,6 @@
 package com.edelivery.edeliveryserver.business;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -8,6 +9,7 @@ import javax.inject.Inject;
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 
@@ -17,38 +19,51 @@ public class SendMessageBS {
 	@Inject
 	DocumentSendHandlerDB   docSendHandler;
 	
-	@Inject 
-	ConnectionWrapper connWrapper;
+	
 	@Inject
 	MessageSendHandlerDB messageHandler;
+	
+	ConnectionWrapper connWrapper;
 	
 	public SendMessageBS(){
 		
 	}
-	
-	public SendMessageBS(ConnectionWrapper connWrapper,DocumentSendHandlerDB   docSendHandler, MessageSendHandlerDB messageHandler){
+	@Inject
+	public SendMessageBS(DocumentSendHandlerDB   docSendHandler, MessageSendHandlerDB messageHandler
+			,ConnectionWrapper connWrapper	
+			){
 		this.connWrapper  = connWrapper;
 		this.docSendHandler = docSendHandler;
 		this.messageHandler = messageHandler;
 	}
 	
-	public void insertMessage2Send(DocumentsSend docSend) throws SQLException{
+	public void insertMessage2Send(DocumentsSend docSend, Connection conn) throws SQLException{
+		boolean closeConnection =false;
+		if(conn==null){ //TODO change 
+			conn = connWrapper.getConnection();
+			closeConnection=true;
+		}
 		try{
-			connWrapper.beginTransaction();
-			docSendHandler.insert(docSend);
+			//connWrapper.beginTransaction();
+			docSendHandler.insert(docSend,conn);
 			MessageSendToAp input = new MessageSendToAp();
 			input.setMessageUniqueId(docSend.getMessageUniqueId());
 			messageHandler.insert(input);
-			connWrapper.commitTransaction();
+			//connWrapper.commitTransaction();
 		}
 		catch(Exception ex){
-			connWrapper.rollbackTransaction();
+			conn.rollback();
 			ex.printStackTrace();
+		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}
 		}
 	}
 	
-	public DocumentsSend selectNextById() throws SQLException{
-		return this.docSendHandler.selectNextById();
+	public DocumentsSend selectNextById(DocumentStatuses status, Connection conn) throws SQLException{
+		return this.docSendHandler.selectNextById(status, conn);
 	}
 	
 }

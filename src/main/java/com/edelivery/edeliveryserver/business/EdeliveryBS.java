@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Date;
@@ -35,11 +36,12 @@ import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.BSDMessage;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.edelivery.edeliveryserver.db.models.Participants;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.gson.Gson;
 import com.modus.edelivery.utils.DispatchExtractor;
 import com.modus.edelivery.utils.SBDMessageWrapper;
@@ -63,7 +65,7 @@ public class EdeliveryBS {
 
 	private static final Logger LOG = Logger.getLogger(EdeliveryBS.class.getName());
 
-	ConnectionWrapper conWrapper;
+	ConnectionWrapper connWrapper;
 	DocumentSendHandlerDB docSendHd;
 	DocumentServerClient docClient;
 	EDeliveryServerConfiguration eDeliveryServerConfiguration;
@@ -87,7 +89,7 @@ public class EdeliveryBS {
 		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
 		this.user=this.eDeliveryServerConfiguration.getConnectorUser();
 		this.password=this.eDeliveryServerConfiguration.getConnectorPassword();
-		this.conWrapper = conWrapper;
+		this.connWrapper = conWrapper;
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
 		
@@ -98,7 +100,7 @@ public class EdeliveryBS {
 		
 		
 		this.httpClient = new DefaultAsyncHttpClient();
-		this.serializer = new com.modus.edeliveryserver.serializer.JacksonSerializer(new ObjectMapper());
+		this.serializer = null;
 		basepath = eDeliveryServerConfiguration.getConnector();
 		auth = new Authorization(user, password);
 		deliveryClient = new EDeliveryClientImplementation(httpClient, serializer,
@@ -155,79 +157,103 @@ public class EdeliveryBS {
 	 * @throws MalformedURLException
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
+	 * @throws SQLException 
 	 */
-	public void sendSBD(DocumentsSend docSend)
-			throws MalformedURLException, JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException {
+	public void sendSBD(DocumentsSend docSend,Connection conn)
+			throws MalformedURLException, JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, SQLException {
 		
-		SBDParams sbdParams;
-		BSDMessage sbdMsg = bsdHandler.select(docSend.getMessageUniqueId());
-		sbdParams = bsdObj2bsdParams(sbdMsg);
-		
-		
-		
-		MessageParams params = new MessageParams();
-		params.seteSensConfigFilename(this.eDeliveryServerConfiguration.getESensConfigFilename());
-		params.setOriginatorName(eDeliveryServerConfiguration.getSenderName());
-		params.setOriginatorEmail(eDeliveryServerConfiguration.getSenderEmail());
-		params.setDestinatorName(docSend.getDocumentReceiverOrganization());
-		params.setDestinatorEmail(docSend.getDocumentReceiverAuthority());
-		params.setFilename(docSend.getActualDocumentFilepath());
-		params.setMsgId(docSend.getMessageId() + "");
-		params.setMsgIdentification(docSend.getMessageUniqueId());
-		params.setNormalizedDocSubject(docSend.getDocumentType());
-		params.setNormalizedDocComments(docSend.getDocumentComments());
-		params.setSamSenderId(eDeliveryServerConfiguration.getSamSenderId());
-
-		CompletableFuture<ResponseMessage> responseC = deliveryClient.sendMessage(sbdParams, params, auth);
-		LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
-		LOG.log(Level.INFO, "message send");
-	}
-
-	public void sendSBD(String sdbStr) {//
-		// call client to send SBD
-
-	}
+		boolean  closeConnection = false; 
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
+		}
+		try{
+			SBDParams sbdParams;
+			BSDMessage sbdMsg = bsdHandler.select(docSend.getMessageUniqueId());
+			sbdParams = bsdObj2bsdParams(sbdMsg);
+			MessageParams params = new MessageParams();
+			params.seteSensConfigFilename(this.eDeliveryServerConfiguration.getESensConfigFilename());
+			params.setOriginatorName(eDeliveryServerConfiguration.getSenderName());
+			params.setOriginatorEmail(eDeliveryServerConfiguration.getSenderEmail());
+			params.setDestinatorName(docSend.getDocumentReceiverOrganization());
+			params.setDestinatorEmail(docSend.getDocumentReceiverAuthority());
+			params.setFilename(docSend.getActualDocumentFilepath());
+			params.setMsgId(docSend.getMessageId() + "");
+			params.setMsgIdentification(docSend.getMessageUniqueId());
+			params.setNormalizedDocSubject(docSend.getDocumentType());
+			params.setNormalizedDocComments(docSend.getDocumentComments());
+			params.setSamSenderId(eDeliveryServerConfiguration.getSamSenderId());
 	
-	public void receiveSBD(MessageReceivedFromAp msg2Get)
+			CompletableFuture<ResponseMessage> responseC = deliveryClient.sendMessage(sbdParams, params, auth);
+			
+			
+			
+			LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
+			LOG.log(Level.INFO, "message send");
+			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()));
+			docSendHd.updateStatus(docSend, conn);
+		}
+		finally{
+			if(conn==null){
+				conn = this.connWrapper.getConnection();
+				closeConnection=true;
+			}
+		}
+		
+	}
+
+	
+	
+	public void receiveSBD(MessageReceivedFromAp msg2Get, Connection conn)
 			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, XPathExpressionException, IOException, DSException, SQLException {
 		
-		
-		
-		
-		CompletableFuture<Object> result = deliveryClient.getMessageDefault(msg2Get.getMessageUniqueId(), auth,true);
-		String msg = (String)result.get();
-		System.out.println(msg);
-		SBDMessageWrapper wrapper= new SBDMessageWrapper(msg);
-		String payLoad = wrapper.getPayload(true);
-		DispatchExtractor dispExtractor = new DispatchExtractor(payLoad); 
-		MessageParams params = dispExtractor.extractParams();
-		//insert file to papyros 
-		String filename = params.getFilename();
-		String file = params.getFile();
-		byte[] valueDecoded= Base64.getDecoder().decode(file.getBytes() );
-		//byte[] dataFile = file.getBytes();
-		DocumentApi docApi;
-		try(InputStream in = new ByteArrayInputStream(valueDecoded);){ 
-			docApi = docClient.insertCall(this.eDeliveryServerConfiguration.getEdeliveryUser(), filename, filename, in);
-		//	insert document to db
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
 		}
-		SBDParams sbdParams;
-		sbdParams = wrapper.extractParams();
-		BSDMessage BSDmsg  = bsdObj2bsdParams(sbdParams);
-		DocumentsReceived docReceived;
-		docReceived= messageParams2DocReceiv( params);
-		docReceived.setDocId(docApi.getId());
-		docReceived.setMessageUniqueId(msg2Get.getMessageUniqueId()); //TODO check
-		docReceivedHandler.insert(docReceived);
-		
-		/*File f = new File("c:/tmp/"+filename);
-		try(FileOutputStream fout=new FileOutputStream(f);InputStream in = new ByteArrayInputStream(valueDecoded);){
-			IOUtils.copy(in, fout);
-		}*/
-		
-		
-		LOG.log(Level.INFO, "params:"+new Gson().toJson(params));
-		LOG.log(Level.INFO, "message send");
+		try{
+			CompletableFuture<Object> result = deliveryClient.getMessageDefault(msg2Get.getMessageUniqueId(), auth,true);
+			String msg = (String)result.get();
+			System.out.println(msg);
+			SBDMessageWrapper wrapper= new SBDMessageWrapper(msg);
+			String payLoad = wrapper.getPayload(true);
+			DispatchExtractor dispExtractor = new DispatchExtractor(payLoad); 
+			MessageParams params = dispExtractor.extractParams();
+			//insert file to papyros 
+			String filename = params.getFilename();
+			String file = params.getFile();
+			byte[] valueDecoded= Base64.getDecoder().decode(file.getBytes() );
+			//byte[] dataFile = file.getBytes();
+			DocumentApi docApi;
+			try(InputStream in = new ByteArrayInputStream(valueDecoded);){ 
+				docApi = docClient.insertCall(this.eDeliveryServerConfiguration.getEdeliveryUser(), filename, filename, in);
+			//	insert document to db
+			}
+			SBDParams sbdParams;
+			sbdParams = wrapper.extractParams();
+			BSDMessage BSDmsg  = bsdObj2bsdParams(sbdParams);
+			DocumentsReceived docReceived;
+			docReceived= messageParams2DocReceiv( params);
+			docReceived.setDocId(docApi.getId());
+			docReceived.setMessageUniqueId(msg2Get.getMessageUniqueId()); //TODO check
+			docReceivedHandler.insert(docReceived);
+			
+			/*File f = new File("c:/tmp/"+filename);
+			try(FileOutputStream fout=new FileOutputStream(f);InputStream in = new ByteArrayInputStream(valueDecoded);){
+				IOUtils.copy(in, fout);
+			}*/
+			
+			
+			LOG.log(Level.INFO, "params:"+new Gson().toJson(params));
+			LOG.log(Level.INFO, "message send");
+		}
+		finally{
+			if(conn!=null&& closeConnection){
+				conn.close();
+				
+			}
+		}
 	}
 
 	

@@ -10,6 +10,8 @@ import javax.sql.DataSource;
 public class EdeliveryDatasource {
 	DataSource edeliveryDatasource;
 
+	public EdeliveryDatasource(){}
+	
 	public DataSource getEdeliveryDatasource() {
 		return edeliveryDatasource;
 	}

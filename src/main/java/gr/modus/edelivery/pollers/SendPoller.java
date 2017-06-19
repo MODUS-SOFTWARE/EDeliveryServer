@@ -1,6 +1,7 @@
 package gr.modus.edelivery.pollers;
 
 
+import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +18,9 @@ import javax.ws.rs.core.Response.Status;
 
 import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
+import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
@@ -36,21 +39,29 @@ public class SendPoller {
 	private static final Logger LOG = Logger.getLogger(SendPoller.class.getName());
 	DataSource dataSource;
 	private Boolean poll;
-
-	@Inject
 	EdeliverySettings settings;
-
-	@Inject
 	EdeliveryBS edeliveryUtils;
-
-	@Inject
 	EdeliveryDatasource edatasource;
-
-	@Inject
 	DocumentSendHandlerDB   docSendHandler;
+	ConnectionWrapper connWrapper;
+	
+	public SendPoller(){}
+	
+	
+	@Inject
+	public SendPoller(EdeliverySettings settings,EdeliveryBS edeliveryUtils,EdeliveryDatasource edatasource,DocumentSendHandlerDB   docSendHandler
+			,ConnectionWrapper connWrapper
+			){
+		this.settings=settings;
+		this.edeliveryUtils = edeliveryUtils;
+		this.edatasource =edatasource ;
+		this.docSendHandler = docSendHandler;
+		this.connWrapper = connWrapper;
+		
+	}
 	
 	@PostConstruct
-	private void construct() throws Exception {
+	private void construct()  {
 		init();
 	}
 
@@ -103,21 +114,39 @@ public class SendPoller {
 	
 
 	public void action() {
+		Connection conn = null;
 		try {
 
+			
+			conn = this.connWrapper.getConnection();
+			
+			
 			if (this.edeliveryUtils == null) {
 				this.edeliveryUtils = new EdeliveryBS();
 			}
 			//this.edeliveryUtils.sendSBD(); TODO
-			DocumentsSend docSend = docSendHandler.selectNextById();
-			this.edeliveryUtils.sendSBD(docSend);
+			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.QUEUED,conn);
+			if(docSend!=null){
+				this.edeliveryUtils.sendSBD(docSend,conn);
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
+		finally{
+			if(conn !=null ){
+				try{
+					conn.close();
+				}
+				catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+		}
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(5000);
 		} catch (InterruptedException ex) {
 			LOG.log(Level.INFO, null, ex);
 		}

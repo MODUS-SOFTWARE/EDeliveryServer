@@ -45,7 +45,7 @@ public class MessageSendHandlerTest {
 	
 	
 	
-	@Test
+	
 	public void insertSend() throws SQLException{
 		handler.insert(messageSendToAp);
 	}

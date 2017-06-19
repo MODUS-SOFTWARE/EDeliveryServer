@@ -20,18 +20,23 @@ import java.util.logging.Logger;
 public class ConnectionWrapper {
 
     private static final Logger LOG = Logger.getLogger( ConnectionWrapper.class.getName() );
-
-    @Inject
     private EdeliveryDatasource datasource;
+    public EdeliveryDatasource getDatasource() {
+		return datasource;
+	}
+	public void setDatasource(EdeliveryDatasource datasource) {
+		this.datasource = datasource;
+	}
 
-    private Connection connection;
-
+	//private Connection connection;
+    public ConnectionWrapper(){}
+    @Inject
     public ConnectionWrapper(EdeliveryDatasource datasource){
     	this.datasource=datasource;
     }
     
-    @PreDestroy
-    public void destroy() {
+    
+    /*public void destroy() {
         try {
             if (connection != null) {
             	connection.close();
@@ -39,9 +44,9 @@ public class ConnectionWrapper {
         } catch (SQLException e) {
             LOG.severe("Unable to close connection.");
         }
-    }
+    }*/
 
-    public void beginTransaction() throws SQLException {
+    /*public void beginTransaction() throws SQLException {
         if (connection == null) {
             connection = datasource.getConnection();
         }
@@ -57,11 +62,14 @@ public class ConnectionWrapper {
         this.connection.rollback();
         this.connection.setAutoCommit(true);
     }
-
+*/
     public Connection getConnection() throws SQLException {
-        if (connection == null) {
-            connection = datasource.getConnection();
-        }
-        return connection;
+  //      if (connection == null) {
+    //        connection = datasource.getConnection();
+      //  }
+        //return connection;
+    	return datasource.getConnection();
     }
+    
+    
 }

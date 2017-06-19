@@ -1,5 +1,6 @@
 package gr.modus.edeliveryserver.db;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -10,8 +11,10 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
+import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
@@ -24,7 +27,7 @@ public class DocumentSendDBTest {
 	DocumentsSend docSend = new DocumentsSend();
 	
 	DocumentSendHandlerDB dhan;
-	
+	ConnectionWrapper connWrapper ; 
 	@Before
 	public void setUp() throws Exception {
 		log.info("MSSQL Tests started");
@@ -49,19 +52,51 @@ public class DocumentSendDBTest {
         docSend.setDocumentOrganizationEtiquette("test etiquette");
         DocumentStatus docStatus = new DocumentStatus();
         docStatus.setId(1);
+        docSend.setId(7);
         docSend.setDocumentStatus(docStatus);
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);
-        dhan = new DocumentSendHandlerDB();
+
+        connWrapper = new ConnectionWrapper(eds);
+        dhan = new DocumentSendHandlerDB(connWrapper);
         
         
 	}
 	
 	
 	
+	
+	public void insertSend(Connection conn) throws SQLException{
+		boolean closeConnection=false;
+		try{
+			if(conn==null){
+				conn = this.connWrapper.getConnection();
+				closeConnection=true;
+			}
+			dhan.insert(docSend,conn);
+		}
+		finally{
+			if(conn!=null && closeConnection){
+				conn.close();
+			}
+		}
+	}
+	
+	
 	@Test
-	public void insertSend() throws SQLException{
-		dhan.insert(docSend);
+	public void updateStatus() throws SQLException{
+		Connection conn = null;
+		try{
+			conn = this.connWrapper.getConnection();
+			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()));
+			dhan.updateStatus(docSend, conn);
+			log.info("end updateStatus");
+		}
+		finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.edelivery.edeliveryserver.db.entityhandlers;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ public class DocumentReceivedHandlerDB {
 				+ "	  values( ? ,? ,? ,?," + "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?,"
 				+ "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?" + "	  )" + "  ";
 		LOGGER.log(Level.INFO, sql);
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(sql,
+		try (Connection conn = this.connWrapper.getDatasource().getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql,
 				Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getActualDocumentFilepath());
 			preparedStatement.setInt(2, input.getDocId());
