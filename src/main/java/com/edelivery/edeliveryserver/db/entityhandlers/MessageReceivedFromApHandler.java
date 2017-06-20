@@ -28,27 +28,29 @@ import javax.ws.rs.BadRequestException;
  */
 public class MessageReceivedFromApHandler extends AbstractDbHandler<MessageReceivedFromAp>{
     
-    @PersistenceContext
-    EntityManager em;
+    
+    //EntityManager em;
 
-    @Override
+    
     protected EntityManager getEntityManager() {
-        return em;
-    }
+      //  return em;
+    	return null;
+   }
     
     public MessageReceivedFromApHandler(){
         super(MessageReceivedFromAp.class);
     }
     
     public MessageReceivedFromAp getMessageUniqueId(String id){
-        MessageReceivedFromAp mrfp = new MessageReceivedFromAp();
-        try{
-            mrfp = (MessageReceivedFromAp) em.createNamedQuery("MessageReceivedFromAp.findByMessageUniqueId")
-                    .getSingleResult();
-        }catch(Exception e){
-            throw new BadRequestException("Message id not found", e);
-        }
-        return mrfp;
+//        MessageReceivedFromAp mrfp = new MessageReceivedFromAp();
+//        try{
+//            mrfp = (MessageReceivedFromAp) em.createNamedQuery("MessageReceivedFromAp.findByMessageUniqueId")
+//                    .getSingleResult();
+//        }catch(Exception e){
+//            throw new BadRequestException("Message id not found", e);
+//        }
+//        return mrfp;
+    return null;
     }
     
 }

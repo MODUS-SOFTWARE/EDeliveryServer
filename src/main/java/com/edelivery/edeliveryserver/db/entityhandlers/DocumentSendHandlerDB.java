@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
+import com.edelivery.edeliveryserver.db.models.Tables;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 @RequestScoped
@@ -42,7 +43,7 @@ public class DocumentSendHandlerDB {
 				+ " ,document_submited_to_ap_date " + " ,document_title " + " ,document_type "
 				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
-				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE message_id = ?  ";
+				+ " FROM "+Tables.documents_send+" WHERE message_id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = this.connWrapper.getConnection();
@@ -78,7 +79,7 @@ public class DocumentSendHandlerDB {
 				+ " ,document_submited_to_ap_date " + " ,document_title " + " ,document_type "
 				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
 				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
-				+ " FROM edeliveryserver.edeliveryserver.documents_send WHERE docId = ?  ";
+				+ " FROM "+Tables.documents_send+" WHERE docId = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = this.connWrapper.getConnection();
@@ -101,7 +102,7 @@ public class DocumentSendHandlerDB {
 		return docSend;
 	}
 	public DocumentsSend updateStatus(DocumentsSend data, Connection conn) throws SQLException{
-		String sql = "update edeliveryserver.documents_send set document_status = ?  where id = ?  ";
+		String sql = "update "+Tables.documents_send+" set document_status = ?  where id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = this.connWrapper.getConnection();
@@ -133,8 +134,8 @@ public class DocumentSendHandlerDB {
 				+ " ,a.document_receiver_organization " + " ,a.document_submited_to_ap_date " + " ,a.document_title "
 				+ " ,a.document_type " + " ,a.document_valid_period " + " ,a.message_id " + " ,a.message_unique_id "
 				+ " ,a.referenced_document_unique_id " + " ,a.document_status " + " ,a.docId "
-				+ " FROM edeliveryserver.edeliveryserver.documents_send  a  "
-				+ "inner join edeliveryserver.message_send_to_ap  b on   b.message_unique_id = a.message_unique_id "
+				+ " FROM "+Tables.documents_send+"  a  "
+				+ "inner join "+Tables.message_send_to_ap+"  b on   b.message_unique_id = a.message_unique_id "
 				+ "Where document_status = ? "
 				+ " ORDER BY b.id  ";
 		boolean closeConnection = false;
@@ -178,7 +179,7 @@ public class DocumentSendHandlerDB {
 
 	public DocumentsSend insert(DocumentsSend input,Connection conn) throws SQLException {
 
-		String sql = "insert into edeliveryserver.documents_send (actual_document_filepath,docId,document_acceptance_period,document_authority_applicant,document_comments\r\n"
+		String sql = "insert into "+Tables.documents_send+" (actual_document_filepath,docId,document_acceptance_period,document_authority_applicant,document_comments\r\n"
 				+ ",document_description,document_etiquette_creation_date,document_issuing_authority,document_issuing_organization,document_language\r\n"
 				+ ",document_organization_applicant,document_organization_etiquette,document_purpose,document_received_from_ap_date,document_receiver_authority\r\n"
 				+",document_receiver_organization,document_submited_to_ap_date,document_title,document_type,document_valid_period,message_id\r\n"
