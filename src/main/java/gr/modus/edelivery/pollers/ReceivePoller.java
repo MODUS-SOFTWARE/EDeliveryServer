@@ -39,6 +39,9 @@ public class ReceivePoller {
 
 	
 	
+	public ReceivePoller(){
+		
+	}
 	
 	@PostConstruct
 	private void construct()  {

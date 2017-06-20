@@ -65,8 +65,9 @@ public class DocumentSendDBTest {
 	
 	
 	
-	
-	public void insertSend(Connection conn) throws SQLException{
+	@Test
+	public void insertSend() throws SQLException{
+		Connection conn=null;
 		boolean closeConnection=false;
 		try{
 			if(conn==null){
@@ -83,7 +84,7 @@ public class DocumentSendDBTest {
 	}
 	
 	
-	@Test
+	
 	public void updateStatus() throws SQLException{
 		Connection conn = null;
 		try{
