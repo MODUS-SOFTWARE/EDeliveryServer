@@ -10,9 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
-import com.edelivery.edeliveryserver.db.entityhandlers.MessageReceivedFromApHandler;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageReceivedFromApHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.google.gson.Gson;
@@ -33,13 +34,15 @@ public class MessageReceivedFromApHandlerDBTest {
 		log.info("MSSQL Tests started");
     	//BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=edeliveryserver;instanceName=SQLEXPRESS");
+        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=papyrosm3_test;instanceName=SQLEXPRESS");
         ds.setUsername("papyrosm3");
         ds.setPassword("papyrosm3");
         ds.setMaxTotal(10);
         ds.setMaxIdle(5);
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
+        //ConstantsDB.elds = ds;
+        
         MessageReceivedFromAp msg1 = new MessageReceivedFromAp();
         msg1.setId(1);
         msg1.setMessageUniqueId("9933_test1-20170614112334473@local_delivery");

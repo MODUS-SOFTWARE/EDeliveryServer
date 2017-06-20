@@ -8,7 +8,10 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
+import com.edelivery.edeliveryserver.db.models.Tables;
 
 @RequestScoped
 public class MessageSendHandlerDB {
@@ -23,9 +26,9 @@ public class MessageSendHandlerDB {
 		this.connWrapper = connWrapper;
 	}
 	public MessageSendToAp insert(MessageSendToAp input) throws SQLException {
-		String sql = "insert into edeliveryserver.message_send_to_ap (message_unique_id) values(?)";
+		String sql = "insert into "+Tables.message_send_to_ap+" (message_unique_id) values(?)";
 		LOGGER.log(Level.INFO,sql);
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
+		try (PreparedStatement preparedStatement = ConstantsDB.getElds().getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getMessageUniqueId());
 			preparedStatement.executeUpdate();
 			try (ResultSet rs = preparedStatement.getGeneratedKeys();) {

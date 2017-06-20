@@ -29,7 +29,7 @@ import javax.ejb.Stateless;
 @Stateless
 public class FileManager {
 
-    @EJB
+   
     EDeliveryServerConfiguration edelConf;
     
     

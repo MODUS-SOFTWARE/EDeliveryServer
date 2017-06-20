@@ -24,27 +24,32 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 
-@Table(name = "attached_documents_send", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "AttachedDocumentsSend.findAll", query = "SELECT a FROM AttachedDocumentsSend a")
-    , @NamedQuery(name = "AttachedDocumentsSend.findById", query = "SELECT a FROM AttachedDocumentsSend a WHERE a.id = :id")
-    , @NamedQuery(name = "AttachedDocumentsSend.findByActualDocumentFilepath", query = "SELECT a FROM AttachedDocumentsSend a WHERE a.actualDocumentFilepath = :actualDocumentFilepath")})
 public class AttachedDocumentsSend implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Size(max = 280)
-    @Column(name = "actual_document_filepath")
     private String actualDocumentFilepath;
-    @JoinColumn(name = "reference_document", referencedColumnName = "id")
-    @ManyToOne
-    private DocumentsSend referenceDocument;
+    private String referenceDocument;
+    private Integer docId;
+    
 
-    public AttachedDocumentsSend() {
+    public Integer getDocId() {
+		return docId;
+	}
+
+	public void setDocId(Integer docId) {
+		this.docId = docId;
+	}
+
+	public String getReferenceDocument() {
+		return referenceDocument;
+	}
+
+	public void setReferenceDocument(String referenceDocument) {
+		this.referenceDocument = referenceDocument;
+	}
+
+	public AttachedDocumentsSend() {
     }
 
     public AttachedDocumentsSend(Integer id) {
@@ -67,13 +72,6 @@ public class AttachedDocumentsSend implements Serializable {
         this.actualDocumentFilepath = actualDocumentFilepath;
     }
 
-    public DocumentsSend getReferenceDocument() {
-        return referenceDocument;
-    }
-
-    public void setReferenceDocument(DocumentsSend referenceDocument) {
-        this.referenceDocument = referenceDocument;
-    }
 
     @Override
     public int hashCode() {

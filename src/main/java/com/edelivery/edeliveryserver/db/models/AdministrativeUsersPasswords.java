@@ -23,25 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 
-@Table(name = "administrative_users_passwords", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "AdministrativeUsersPasswords.findAll", query = "SELECT a FROM AdministrativeUsersPasswords a")
-    , @NamedQuery(name = "AdministrativeUsersPasswords.findById", query = "SELECT a FROM AdministrativeUsersPasswords a WHERE a.id = :id")
-    , @NamedQuery(name = "AdministrativeUsersPasswords.findByPassword", query = "SELECT a FROM AdministrativeUsersPasswords a WHERE a.password = :password")})
 public class AdministrativeUsersPasswords implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
     private String password;
-    @JoinColumn(name = "owned_by", referencedColumnName = "id")
-    @ManyToOne
     private AdministrativeUsers ownedBy;
 
     public AdministrativeUsersPasswords() {

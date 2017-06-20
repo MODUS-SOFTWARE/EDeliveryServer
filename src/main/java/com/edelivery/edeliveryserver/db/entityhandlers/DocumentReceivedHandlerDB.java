@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 
 @RequestScoped
@@ -38,7 +39,7 @@ public class DocumentReceivedHandlerDB {
 				+ "	  values( ? ,? ,? ,?," + "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?,"
 				+ "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?" + "	  )" + "  ";
 		LOGGER.log(Level.INFO, sql);
-		try (Connection conn = this.connWrapper.getDatasource().getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql,
+		try (Connection conn = ConstantsDB.getElds().getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql,
 				Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getActualDocumentFilepath());
 			preparedStatement.setInt(2, input.getDocId());

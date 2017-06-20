@@ -5,29 +5,29 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
+import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
-import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
+import com.edelivery.edeliveryserver.db.models.Evidence;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 import gr.modus.edeliveryclient.EdeliveryClientTest;
 
-public class DocumentSendDBTest {
+public class EvidenceDBTest {
 	private static final Logger log = Logger.getLogger(EdeliveryClientTest.class.getName());
 	private BasicDataSource ds = new BasicDataSource();
 	
-	DocumentsSend docSend = new DocumentsSend();
+	Evidence evidenceObj = new Evidence();
 	
-	DocumentSendHandlerDB dhan;
+	EvidenceHandlerDB evidenceHan;
+	
 	ConnectionWrapper connWrapper ; 
 	@Before
 	public void setUp() throws Exception {
@@ -42,43 +42,34 @@ public class DocumentSendDBTest {
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
         
-        //ConstantsDB.elds = ds;
+        ConstantsDB.setElds(ds); 
+        evidenceHan = new EvidenceHandlerDB();
         
         String actualDocumentFilepath = "F:/testDocument/pdf/d_ok_imi.pdf";
-        docSend.setActualDocumentFilepath(actualDocumentFilepath);
-        docSend.setDocId(55132);
-        docSend.setDocumentComments("comments");
+        evidenceObj.setActual_document_filepath(actualDocumentFilepath);
+        evidenceObj.setDocId(55132);
+        evidenceObj.setEventCode("DELIVERY");
         UUID uniqueId = UUID.randomUUID();
-        docSend.setMessageId(55132);
-        docSend.setMessageUniqueId(uniqueId.toString());
-        docSend.setDocumentTitle("title");
-        docSend.setDocumentType("type");
-        docSend.setDocumentOrganizationEtiquette("test etiquette");
-        DocumentStatus docStatus = new DocumentStatus();
-        docStatus.setId(1);
-        docSend.setId(7);
-        docSend.setDocumentStatus(docStatus);
-        EdeliveryDatasource eds = new EdeliveryDatasource(); 
-        eds.setEdeliveryDatasource(ds);
-
-        connWrapper = new ConnectionWrapper(eds);
-        dhan = new DocumentSendHandlerDB(connWrapper);
-        
+        evidenceObj.setEvidence_id(uniqueId.toString());
+        evidenceObj.setEvidence_name("test name");
+        evidenceObj.setEvidence_time("10-03-2017");
+        UUID uniqueId2 = UUID.randomUUID();
+        evidenceObj.setReference_document(uniqueId2.toString());
         
 	}
 	
 	
 	
 	@Test
-	public void insertSend() throws SQLException{
+	public void insert() throws SQLException{
 		Connection conn=null;
 		boolean closeConnection=false;
 		try{
 			if(conn==null){
-				conn = this.connWrapper.getConnection();
+				
 				closeConnection=true;
 			}
-			dhan.insert(docSend,conn);
+			evidenceHan.insert(evidenceObj,null);
 		}
 		finally{
 			if(conn!=null && closeConnection){
@@ -86,22 +77,4 @@ public class DocumentSendDBTest {
 			}
 		}
 	}
-	
-	
-	
-	public void updateStatus() throws SQLException{
-		Connection conn = null;
-		try{
-			conn = this.connWrapper.getConnection();
-			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND.getValue()));
-			dhan.updateStatus(docSend, conn);
-			log.info("end updateStatus");
-		}
-		finally{
-			if(conn!=null){
-				conn.close();
-			}
-		}
-	}
-	
 }

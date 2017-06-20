@@ -34,13 +34,13 @@ import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 @Singleton
 @Startup
 @TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
-public class SendPoller {
+public class EvidencePoller {
 	/**
 	 *
 	 * @author chomenidis
 	 */
 
-	private static final Logger LOG = Logger.getLogger(SendPoller.class.getName());
+	private static final Logger LOG = Logger.getLogger(EvidencePoller.class.getName());
 	DataSource dataSource;
 	private Boolean poll;
 	EdeliverySettings settings;
@@ -49,11 +49,11 @@ public class SendPoller {
 	DocumentSendHandlerDB   docSendHandler;
 	ConnectionWrapper connWrapper;
 	
-	public SendPoller(){}
+	public EvidencePoller(){}
 	
 	
 	@Inject
-	public SendPoller(EdeliverySettings settings,EdeliveryBS edeliveryUtils,EdeliveryDatasource edatasource,DocumentSendHandlerDB   docSendHandler
+	public EvidencePoller(EdeliverySettings settings,EdeliveryBS edeliveryUtils,EdeliveryDatasource edatasource,DocumentSendHandlerDB   docSendHandler
 			,ConnectionWrapper connWrapper
 			){
 		this.settings=settings;
@@ -130,7 +130,7 @@ public class SendPoller {
 				this.edeliveryUtils = new EdeliveryBS();
 			}
 			//this.edeliveryUtils.sendSBD(); TODO
-			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.QUEUED,null);
+			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.SEND,null);
 			if(docSend!=null){
 				this.edeliveryUtils.sendSBD(docSend,null);
 			}

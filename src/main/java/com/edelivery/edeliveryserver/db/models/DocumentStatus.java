@@ -24,24 +24,12 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author pantelispanka
  */
 
-@Table(name = "document_status", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "DocumentStatus.findAll", query = "SELECT d FROM DocumentStatus d")
-    , @NamedQuery(name = "DocumentStatus.findById", query = "SELECT d FROM DocumentStatus d WHERE d.id = :id")
-    , @NamedQuery(name = "DocumentStatus.findByStatus", query = "SELECT d FROM DocumentStatus d WHERE d.status = :status")})
 public class DocumentStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Size(max = 20)
     private String status;
-    @OneToMany(mappedBy = "documentStatus")
     private Collection<DocumentsReceived> documentsReceivedCollection;
-    @OneToMany(mappedBy = "documentStatus")
     private Collection<DocumentsSend> documentsSendCollection;
 
     public DocumentStatus() {
@@ -67,7 +55,6 @@ public class DocumentStatus implements Serializable {
         this.status = status;
     }
 
-    @XmlTransient
     public Collection<DocumentsReceived> getDocumentsReceivedCollection() {
         return documentsReceivedCollection;
     }
@@ -76,7 +63,6 @@ public class DocumentStatus implements Serializable {
         this.documentsReceivedCollection = documentsReceivedCollection;
     }
 
-    @XmlTransient
     public Collection<DocumentsSend> getDocumentsSendCollection() {
         return documentsSendCollection;
     }

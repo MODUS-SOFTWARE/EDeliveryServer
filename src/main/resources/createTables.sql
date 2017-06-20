@@ -182,7 +182,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE ED_message_received_from_ap(
-	id int NOT NULL,
+	id int IDENTITY(1,1) NOT NULL,
 	message_unique_id varchar(255) NOT NULL
 ) ON [PRIMARY]
 
@@ -202,7 +202,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE ED_message_send_to_ap(
-	id int NOT NULL,
+	id int IDENTITY(1,1) NOT NULL,
 	message_unique_id varchar(255) NOT NULL
 ) ON [PRIMARY]
 
@@ -266,5 +266,24 @@ CREATE TABLE ED_BSD_SCOPE(
 CREATE TABLE ED_BSD_HAS_SCOPE(
 	sbd_id int IDENTITY(1,1) NOT NULL,
 	scope_id varchar(255) NOT NULL
+) ON [PRIMARY]
+
+CREATE TABLE ED_attached_documents_send(
+	id int IDENTITY(1,1) NOT NULL,
+	actual_document_filepath [varchar](255) NULL,
+	docId [int] NULL,
+	reference_document varchar(255)  NULL
+) ON [PRIMARY]
+
+
+CREATE TABLE ED_evidence_documents_send(
+	id int IDENTITY(1,1) NOT NULL,
+	actual_document_filepath [varchar](255) NULL,
+	docId [int] NULL,
+	reference_document varchar(255)  NULL,
+	eventcode varchar(255)  NULL,
+	evidence_identifier varchar(255)  NULL,
+	evidence_name varchar(255)  NULL,
+	evidence_time varchar(255)  NULL
 ) ON [PRIMARY]
 

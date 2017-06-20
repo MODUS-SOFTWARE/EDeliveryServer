@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
@@ -26,15 +27,15 @@ public class MessageSendHandlerTest {
 		log.info("MSSQL Tests started");
     	//BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=edeliveryserver;instanceName=SQLEXPRESS");
+        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=papyrosm3_test;instanceName=SQLEXPRESS");
         ds.setUsername("papyrosm3");
         ds.setPassword("papyrosm3");
         ds.setMaxTotal(10);
         ds.setMaxIdle(5);
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
-        
-        messageSendToAp.setMessageUniqueId("c97f125e-d5d1-4407-bd00-ee309628e58a");
+        //ConstantsDB.elds = ds;
+        messageSendToAp.setMessageUniqueId("5834f1c4-b538-4e3d-846f-0134fc16c4c6");
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);
         connWrapper = new ConnectionWrapper(eds);
@@ -45,7 +46,7 @@ public class MessageSendHandlerTest {
 	
 	
 	
-	
+	@Test
 	public void insertSend() throws SQLException{
 		handler.insert(messageSendToAp);
 	}

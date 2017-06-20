@@ -1,8 +1,15 @@
 package gr.modus.edeliveryserver.servlet;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.sql.DataSource;
+
+import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
+import com.modus.edeliveryserver.db.factories.PapyrosDataSource;
 
 import gr.modus.edelivery.pollers.SendPoller;
 
@@ -14,14 +21,19 @@ import gr.modus.edelivery.pollers.SendPoller;
 public class Initializer extends HttpServlet 
 {
 	SendPoller sendPoller;
-   
+	EDeliveryServerConfiguration configApp;
     public void init(ServletConfig config) throws ServletException {
-     
-     
         super.init(config);
+        configApp = new EDeliveryServerConfiguration();
+        
+        
            
         sendPoller  = new SendPoller();
         sendPoller.init();
     }
    
+    
+    
+    
+    
 }

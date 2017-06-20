@@ -31,33 +31,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author pantelispanka
  */
 
-@Table(name = "documents_received", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "DocumentsReceived.findAll", query = "SELECT d FROM DocumentsReceived d")
-    , @NamedQuery(name = "DocumentsReceived.findById", query = "SELECT d FROM DocumentsReceived d WHERE d.id = :id")
-    , @NamedQuery(name = "DocumentsReceived.findByMessageId", query = "SELECT d FROM DocumentsReceived d WHERE d.messageId = :messageId")
-    , @NamedQuery(name = "DocumentsReceived.findByMessageUniqueId", query = "SELECT d FROM DocumentsReceived d WHERE d.messageUniqueId = :messageUniqueId")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentOrganizationEtiquette", query = "SELECT d FROM DocumentsReceived d WHERE d.documentOrganizationEtiquette = :documentOrganizationEtiquette")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentType", query = "SELECT d FROM DocumentsReceived d WHERE d.documentType = :documentType")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentTitle", query = "SELECT d FROM DocumentsReceived d WHERE d.documentTitle = :documentTitle")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentPurpose", query = "SELECT d FROM DocumentsReceived d WHERE d.documentPurpose = :documentPurpose")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentDescription", query = "SELECT d FROM DocumentsReceived d WHERE d.documentDescription = :documentDescription")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentEtiquetteCreationDate", query = "SELECT d FROM DocumentsReceived d WHERE d.documentEtiquetteCreationDate = :documentEtiquetteCreationDate")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentSubmitedToApDate", query = "SELECT d FROM DocumentsReceived d WHERE d.documentSubmitedToApDate = :documentSubmitedToApDate")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentReceivedFromApDate", query = "SELECT d FROM DocumentsReceived d WHERE d.documentReceivedFromApDate = :documentReceivedFromApDate")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentComments", query = "SELECT d FROM DocumentsReceived d WHERE d.documentComments = :documentComments")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentLanguage", query = "SELECT d FROM DocumentsReceived d WHERE d.documentLanguage = :documentLanguage")
-    , @NamedQuery(name = "DocumentsReceived.findByReferencedDocumentUniqueId", query = "SELECT d FROM DocumentsReceived d WHERE d.referencedDocumentUniqueId = :referencedDocumentUniqueId")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentValidPeriod", query = "SELECT d FROM DocumentsReceived d WHERE d.documentValidPeriod = :documentValidPeriod")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentAcceptancePeriod", query = "SELECT d FROM DocumentsReceived d WHERE d.documentAcceptancePeriod = :documentAcceptancePeriod")
-    , @NamedQuery(name = "DocumentsReceived.findByActualDocumentFilepath", query = "SELECT d FROM DocumentsReceived d WHERE d.actualDocumentFilepath = :actualDocumentFilepath")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentIssuingAuthority", query = "SELECT d FROM DocumentsReceived d WHERE d.documentIssuingAuthority = :documentIssuingAuthority")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentIssuingOrganization", query = "SELECT d FROM DocumentsReceived d WHERE d.documentIssuingOrganization = :documentIssuingOrganization")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentReceiverAuthority", query = "SELECT d FROM DocumentsReceived d WHERE d.documentReceiverAuthority = :documentReceiverAuthority")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentReceiverOrganization", query = "SELECT d FROM DocumentsReceived d WHERE d.documentReceiverOrganization = :documentReceiverOrganization")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentAuthorityApplicant", query = "SELECT d FROM DocumentsReceived d WHERE d.documentAuthorityApplicant = :documentAuthorityApplicant")
-    , @NamedQuery(name = "DocumentsReceived.findByDocumentOrganizationApplicant", query = "SELECT d FROM DocumentsReceived d WHERE d.documentOrganizationApplicant = :documentOrganizationApplicant")})
 public class DocumentsReceived implements Serializable {
 	private Integer docId;
 	
@@ -70,92 +43,31 @@ public class DocumentsReceived implements Serializable {
 	}
 
 	private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "message_id")
     private int messageId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 80)
-    @Column(name = "message_unique_id")
     private String messageUniqueId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "document_organization_etiquette")
     private String documentOrganizationEtiquette;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "document_type")
     private String documentType;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 400)
-    @Column(name = "document_title")
     private String documentTitle;
-    @Size(max = 100)
-    @Column(name = "document_purpose")
     private String documentPurpose;
-    @Size(max = 400)
-    @Column(name = "document_description")
     private String documentDescription;
-    @Column(name = "document_etiquette_creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date documentEtiquetteCreationDate;
-    @Column(name = "document_submited_to_ap_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date documentSubmitedToApDate;
-    @Column(name = "document_received_from_ap_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date documentReceivedFromApDate;
-    @Size(max = 400)
-    @Column(name = "document_comments")
     private String documentComments;
-    @Size(max = 10)
-    @Column(name = "document_language")
     private String documentLanguage;
-    @Size(max = 80)
-    @Column(name = "referenced_document_unique_id")
     private String referencedDocumentUniqueId;
-    @Column(name = "document_valid_period")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date documentValidPeriod;
-    @Column(name = "document_acceptance_period")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date documentAcceptancePeriod;
-    @Size(max = 200)
-    @Column(name = "actual_document_filepath")
     private String actualDocumentFilepath;
-    @Size(max = 100)
-    @Column(name = "document_issuing_authority")
     private String documentIssuingAuthority;
-    @Size(max = 100)
-    @Column(name = "document_issuing_organization")
     private String documentIssuingOrganization;
-    @Size(max = 100)
-    @Column(name = "document_receiver_authority")
     private String documentReceiverAuthority;
-    @Size(max = 100)
-    @Column(name = "document_receiver_organization")
     private String documentReceiverOrganization;
-    @Size(max = 100)
-    @Column(name = "document_authority_applicant")
     private String documentAuthorityApplicant;
-    @Size(max = 100)
-    @Column(name = "document_organization_applicant")
     private String documentOrganizationApplicant;
-    @JoinColumn(name = "document_status", referencedColumnName = "id")
-    @ManyToOne
     private DocumentStatus documentStatus;
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
     private MessageSendToAp messageSendToAp;
-    @OneToMany(mappedBy = "referenceDocument")
     private Collection<AttachedDocumentsReceived> attachedDocumentsReceivedCollection;
 
     public DocumentsReceived() {

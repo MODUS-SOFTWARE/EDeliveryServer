@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.Tables;
@@ -46,7 +47,7 @@ public class DocumentSendHandlerDB {
 				+ " FROM "+Tables.documents_send+" WHERE message_id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
@@ -82,7 +83,7 @@ public class DocumentSendHandlerDB {
 				+ " FROM "+Tables.documents_send+" WHERE docId = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
@@ -105,14 +106,15 @@ public class DocumentSendHandlerDB {
 		String sql = "update "+Tables.documents_send+" set document_status = ?  where id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
-			
+			conn = ConstantsDB.getElds().getConnection();
+			conn.setAutoCommit(false);
 			closeConnection = true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
 			preparedStatement.setInt(1, data.getDocumentStatus().getId());
 			preparedStatement.setInt(2, data.getId());
 			preparedStatement.executeUpdate();
+			conn.commit();
 		}
 		finally{
 			if(conn !=null && closeConnection){
@@ -140,7 +142,7 @@ public class DocumentSendHandlerDB {
 				+ " ORDER BY b.id  ";
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection = true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
@@ -190,7 +192,7 @@ public class DocumentSendHandlerDB {
 		LOGGER.log(Level.INFO,sql);
 		boolean closeConnection = false; 
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {

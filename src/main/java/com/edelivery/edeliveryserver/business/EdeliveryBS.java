@@ -34,15 +34,18 @@ import com.edelivery.edeliveryserver.db.entityhandlers.BSDHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
+import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
 import com.edelivery.edeliveryserver.db.models.BSDMessage;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
+import com.edelivery.edeliveryserver.db.models.Evidence;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.edelivery.edeliveryserver.db.models.Participants;
 
 import com.google.gson.Gson;
+import com.modus.edelivery.utils.DeliveryNonDeliveryToRecipientExtractor;
 import com.modus.edelivery.utils.DispatchExtractor;
 import com.modus.edelivery.utils.SBDMessageWrapper;
 import com.modus.edeliveryclient.EDeliveryClient;
@@ -50,6 +53,7 @@ import com.modus.edeliveryclient.EDeliveryClientImplementation;
 import com.modus.edeliveryclient.consumer.SbdConsumer;
 import com.modus.edeliveryclient.consumer.SmpParticipantConsumer;
 import com.modus.edeliveryclient.models.Authorization;
+import com.modus.edeliveryclient.models.EvidenceParams;
 import com.modus.edeliveryclient.models.ResponseMessage;
 import com.modus.edeliveryclient.models.SBDParams;
 import com.modus.edeliveryclient.serialize.Serializer;
@@ -72,19 +76,22 @@ public class EdeliveryBS {
 	AsyncHttpClient httpClient;
 	Serializer serializer;
 	String basepath = "http://192.168.20.10:8080/APREST";
+	
 	String user = "";
 	String password = "";
 	Authorization auth;
 	EDeliveryClient deliveryClient;
 	BSDHandlerDB bsdHandler;
 	DocumentReceivedHandlerDB docReceivedHandler;
+	EvidenceHandlerDB eviHandler;
+	
 	public EdeliveryBS() {
 	}
 
 	@Inject
 	public EdeliveryBS(ConnectionWrapper conWrapper, DocumentSendHandlerDB docSendHd, DocumentServerClient docClient,
 			EDeliveryServerConfiguration eDeliveryServerConfiguration,BSDHandlerDB bsdHandler
-			,DocumentReceivedHandlerDB docReceivedHandler
+			,DocumentReceivedHandlerDB docReceivedHandler,EvidenceHandlerDB eviHandler
 			) {
 		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
 		this.user=this.eDeliveryServerConfiguration.getConnectorUser();
@@ -92,7 +99,7 @@ public class EdeliveryBS {
 		this.connWrapper = conWrapper;
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
-		
+		this.eviHandler = eviHandler;
 		/*
 		 * 
 		 * */
@@ -190,7 +197,7 @@ public class EdeliveryBS {
 			
 			LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
 			LOG.log(Level.INFO, "message send");
-			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()));
+			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND .getValue()));
 			docSendHd.updateStatus(docSend, null);
 		}
 		finally{
@@ -201,6 +208,56 @@ public class EdeliveryBS {
 		
 	}
 
+	
+	public void receiveEvidenceAp(String  msgId, Connection conn)
+			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, XPathExpressionException, IOException, DSException, SQLException {
+		
+		
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = this.connWrapper.getConnection();
+			closeConnection=true;
+		}
+		try{
+			CompletableFuture<Object> result = deliveryClient.getMessageEvidenceAp(msgId, auth, true);
+			String msg = (String)result.get();
+			System.out.println(msg);
+			DeliveryNonDeliveryToRecipientExtractor wrapper= new DeliveryNonDeliveryToRecipientExtractor(msg);
+			EvidenceParams evidenceParams = wrapper.extractParams();
+			
+			String filename = "Devidence_"+evidenceParams.getEvidence_identifier();
+			String file = msg;
+			byte[] valueDecoded= file.getBytes() ;
+			//byte[] dataFile = file.getBytes();
+			DocumentApi docApi;
+			try(InputStream in = new ByteArrayInputStream(valueDecoded);){ 
+				docApi = docClient.insertCall(this.eDeliveryServerConfiguration.getEdeliveryUser(), filename, filename, in);
+			//	insert document to db
+			}
+			
+			
+			Evidence evi;
+			evi= eviParams2Evi( evidenceParams);
+			evi.setDocId(docApi.getId());
+			eviHandler.insert(evi, conn);
+			
+			/*File f = new File("c:/tmp/"+filename);
+			try(FileOutputStream fout=new FileOutputStream(f);InputStream in = new ByteArrayInputStream(valueDecoded);){
+				IOUtils.copy(in, fout);
+			}*/
+			
+			
+			LOG.log(Level.INFO, "params:"+new Gson().toJson(evi));
+			LOG.log(Level.INFO, "message send");
+		}
+		finally{
+			if(conn!=null&& closeConnection){
+				conn.close();
+				
+			}
+		}
+	}
+	
 	
 	
 	public void receiveSBD(MessageReceivedFromAp msg2Get, Connection conn)
@@ -341,6 +398,17 @@ public class EdeliveryBS {
 		return docReceived;
 	}
 	
-	
+	public static Evidence eviParams2Evi(EvidenceParams params){
+		Evidence evi = new Evidence(); 
+		evi.setActual_document_filepath("");
+		String code = (params.getEventcode().indexOf("#")>-1)?params.getEventcode().substring(params.getEventcode().indexOf("#")+1, params.getEventcode().length()):params.getEventcode();
+		evi.setEventCode(code);
+		evi.setEvidence_id(params.getEvidence_identifier());
+		evi.setEvidence_name(params.getEvidence_name());
+		evi.setEvidence_time(params.getEvidence_time());
+		evi.setReference_document(params.getReference_document());
+		
+		return evi;
+	}
 	
 }

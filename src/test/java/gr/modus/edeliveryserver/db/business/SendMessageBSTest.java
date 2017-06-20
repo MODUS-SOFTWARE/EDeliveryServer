@@ -13,6 +13,7 @@ import com.edelivery.edeliveryserver.business.SendMessageBS;
 import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
@@ -38,7 +39,7 @@ public class SendMessageBSTest {
 		log.info("MSSQL Tests started");
     	//BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=edeliveryserver;instanceName=SQLEXPRESS");
+        ds.setUrl("jdbc:sqlserver://testsrv;databaseName=papyrosm3_test;instanceName=SQLEXPRESS");
         ds.setUsername("papyrosm3");
         ds.setPassword("papyrosm3");
         ds.setMaxTotal(10);
@@ -46,7 +47,7 @@ public class SendMessageBSTest {
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
         
-        
+        //ConstantsDB.elds = ds;
         String actualDocumentFilepath = "F:/testDocument/pdf/d_ok_imi.pdf";
         docSend.setActualDocumentFilepath(actualDocumentFilepath);
         docSend.setDocId(55132);

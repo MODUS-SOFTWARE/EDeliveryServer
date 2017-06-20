@@ -17,7 +17,9 @@ public enum DocumentStatuses {
 	SKIPPED(4),
 	PREPARE(5),
 	DELETED(6),
-	SUPPORT(7);
+	SUPPORT(7),
+	SEND(8)
+	;
     private final int value;
 
     DocumentStatuses(int value) {

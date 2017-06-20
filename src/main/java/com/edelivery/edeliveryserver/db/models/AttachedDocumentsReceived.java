@@ -24,24 +24,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 
-@Table(name = "attached_documents_received", catalog = "edeliveryserver", schema = "edeliveryserver")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "AttachedDocumentsReceived.findAll", query = "SELECT a FROM AttachedDocumentsReceived a")
-    , @NamedQuery(name = "AttachedDocumentsReceived.findById", query = "SELECT a FROM AttachedDocumentsReceived a WHERE a.id = :id")
-    , @NamedQuery(name = "AttachedDocumentsReceived.findByActualDocumentFilepath", query = "SELECT a FROM AttachedDocumentsReceived a WHERE a.actualDocumentFilepath = :actualDocumentFilepath")})
 public class AttachedDocumentsReceived implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
     private Integer id;
-    @Size(max = 280)
-    @Column(name = "actual_document_filepath")
     private String actualDocumentFilepath;
-    @JoinColumn(name = "reference_document", referencedColumnName = "id")
-    @ManyToOne
     private DocumentsReceived referenceDocument;
 
     public AttachedDocumentsReceived() {

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 
@@ -28,7 +29,7 @@ public class MessageReceivedFromApHandlerDB {
 		String uniqueIds = "";
 		String sql = "SELECT  id,message_unique_id\r\n" + 
 				"FROM edeliveryserver.message_received_from_ap\r\n" ;
-		try (PreparedStatement preparedStatement = this.connWrapper.getConnection().prepareStatement(sql);) {
+		try (PreparedStatement preparedStatement = ConstantsDB.getElds().getConnection().prepareStatement(sql);) {
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				while (resultSet.next()) {
 					MessageReceivedFromAp mp = map(resultSet);

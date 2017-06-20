@@ -7,6 +7,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.ws.rs.core.Response;
@@ -19,6 +21,7 @@ import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 
 @Singleton
 @Startup
+@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 public class ReceivePoller {
 
 	private static final Logger LOG = Logger.getLogger(SendPoller.class.getName());
