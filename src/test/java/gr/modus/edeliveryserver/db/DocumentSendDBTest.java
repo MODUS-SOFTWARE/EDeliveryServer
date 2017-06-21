@@ -55,8 +55,9 @@ public class DocumentSendDBTest {
         docSend.setDocumentType("type");
         docSend.setDocumentOrganizationEtiquette("test etiquette");
         DocumentStatus docStatus = new DocumentStatus();
-        docStatus.setId(1);
+        docStatus.setId(0);docStatus.setStatus(""+DocumentStatuses.QUEUED.getValue());
         docSend.setId(7);
+        
         docSend.setDocumentStatus(docStatus);
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);

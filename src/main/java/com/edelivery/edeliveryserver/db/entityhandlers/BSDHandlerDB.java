@@ -75,14 +75,14 @@ public class BSDHandlerDB {
 		sbd.setMan_type("maniTypeQualCode");
 		sbd.setMan_uni("uniformResourceIdentifier");
 		Scope s1 = new Scope(); s1.setId(1);
-		s1.setSc_id(" http://uri.etsi.org/02640/soapbinding/v2#::REMDispatch:2");
-		s1.setSc_instance("Instance");
+		s1.setSc_id("ID");
+		s1.setSc_instance("http://uri.etsi.org/02640/soapbinding/v2#::REMDispatch:2");
 		s1.setSc_type("DOCUMENTID");
 		
 		
 		Scope s2 = new Scope(); s2.setId(2);
-		s2.setSc_id("urn:cef-eDelivery.europa.eu::generalERDS:ver1.0");
-		s2.setSc_instance("Instance");
+		s2.setSc_id("ID");
+		s2.setSc_instance("urn:cef-eDelivery.europa.eu::generalERDS:ver1.0");
 		s2.setSc_type("PROCESSID");
 		List<Scope> scoped = new ArrayList<Scope>();
 		scoped.add(s1);scoped.add(s2);

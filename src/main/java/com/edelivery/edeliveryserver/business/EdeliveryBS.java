@@ -10,8 +10,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -35,7 +37,9 @@ import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
+import com.edelivery.edeliveryserver.db.entityhandlers.MessageReceivedFromApHandlerDB;
 import com.edelivery.edeliveryserver.db.models.BSDMessage;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
@@ -54,6 +58,7 @@ import com.modus.edeliveryclient.consumer.SbdConsumer;
 import com.modus.edeliveryclient.consumer.SmpParticipantConsumer;
 import com.modus.edeliveryclient.models.Authorization;
 import com.modus.edeliveryclient.models.EvidenceParams;
+import com.modus.edeliveryclient.models.Messages;
 import com.modus.edeliveryclient.models.ResponseMessage;
 import com.modus.edeliveryclient.models.SBDParams;
 import com.modus.edeliveryclient.serialize.Serializer;
@@ -62,6 +67,7 @@ import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
 import JavaPapyrusR6ServerApi.DataTypes.DocumentApi;
 import gr.modus.edelivery.adapter.messages.MessageParams;
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
+import gr.modus.edelivery.papyros.servers.exceptions.InvalidInputException;
 
 
 @RequestScoped
@@ -84,7 +90,7 @@ public class EdeliveryBS {
 	BSDHandlerDB bsdHandler;
 	DocumentReceivedHandlerDB docReceivedHandler;
 	EvidenceHandlerDB eviHandler;
-	
+	MessageReceivedFromApHandlerDB messageReceivedHandler;
 	public EdeliveryBS() {
 	}
 
@@ -92,6 +98,7 @@ public class EdeliveryBS {
 	public EdeliveryBS(ConnectionWrapper conWrapper, DocumentSendHandlerDB docSendHd, DocumentServerClient docClient,
 			EDeliveryServerConfiguration eDeliveryServerConfiguration,BSDHandlerDB bsdHandler
 			,DocumentReceivedHandlerDB docReceivedHandler,EvidenceHandlerDB eviHandler
+			,MessageReceivedFromApHandlerDB messageReceivedHandler
 			) {
 		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
 		this.user=this.eDeliveryServerConfiguration.getConnectorUser();
@@ -100,6 +107,7 @@ public class EdeliveryBS {
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
 		this.eviHandler = eviHandler;
+		this.messageReceivedHandler = messageReceivedHandler;
 		/*
 		 * 
 		 * */
@@ -169,9 +177,10 @@ public class EdeliveryBS {
 	public void sendSBD(DocumentsSend docSend,Connection conn)
 			throws MalformedURLException, JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, SQLException {
 		
+		
 		boolean  closeConnection = false; 
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try{
@@ -215,7 +224,7 @@ public class EdeliveryBS {
 		
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try{
@@ -258,16 +267,53 @@ public class EdeliveryBS {
 		}
 	}
 	
-	
-	
+	public void receiveNextMessage(Connection conn) throws SQLException, InterruptedException, ExecutionException, XPathExpressionException, JAXBException, DatatypeConfigurationException, IOException, DSException, InvalidInputException{
+		List<MessageReceivedFromAp> all = receivePending( conn);
+		List<MessageReceivedFromAp> pending =  messageReceivedHandler.select(all);
+		MessageReceivedFromAp msg = pending.get(0);
+		receiveSBD(msg,conn);
+	}
+	public List<MessageReceivedFromAp> receivePending(Connection conn) throws SQLException, InterruptedException, ExecutionException{
+		/*CompletableFuture<Messages> result = deliveryClient.getMesaggesPending(auth);
+		Messages msg = new Messages();
+		msg = (Messages) result.get();
+		System.out.println(new Gson().toJson(msg));
+		*/
+		List<MessageReceivedFromAp> all = new ArrayList<MessageReceivedFromAp>();
+		boolean closeConnection = false;
+		if(conn==null){
+			conn = ConstantsDB.getElds().getConnection();
+			closeConnection=true;
+		}
+		try{
+			CompletableFuture<Messages> results = deliveryClient.getMesaggesPending(auth);
+			Messages msg = results.get();
+			for(int i = 0 ; i< msg.getMessages().getMessageId().length  ; i ++){
+				String messageUniqueId = msg.getMessages().getMessageId()[i];
+				//System.out.println(s);
+				MessageReceivedFromAp messageAp= new MessageReceivedFromAp();
+				messageAp.setMessageUniqueId(messageUniqueId);
+				all.add(messageAp);	
+			}
+			/*List<MessageReceivedFromAp> all*/
+		}
+		finally{
+			if(conn!=null&& closeConnection){
+				conn.close();
+				
+			}
+		}
+		return all;
+	}
 	public void receiveSBD(MessageReceivedFromAp msg2Get, Connection conn)
-			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, XPathExpressionException, IOException, DSException, SQLException {
+			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, XPathExpressionException, IOException, DSException, SQLException, InvalidInputException {
 		
 		boolean closeConnection = false;
 		if(conn==null){
-			conn = this.connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
+		MessageParams params = null;
 		try{
 			CompletableFuture<Object> result = deliveryClient.getMessageDefault(msg2Get.getMessageUniqueId(), auth,true);
 			String msg = (String)result.get();
@@ -275,10 +321,13 @@ public class EdeliveryBS {
 			SBDMessageWrapper wrapper= new SBDMessageWrapper(msg);
 			String payLoad = wrapper.getPayload(true);
 			DispatchExtractor dispExtractor = new DispatchExtractor(payLoad); 
-			MessageParams params = dispExtractor.extractParams();
+			params = dispExtractor.extractParams();
 			//insert file to papyros 
 			String filename = params.getFilename();
 			String file = params.getFile();
+			if(file.equals("")){
+				throw new InvalidInputException("file is empty, message type is not valid");
+			}
 			byte[] valueDecoded= Base64.getDecoder().decode(file.getBytes() );
 			//byte[] dataFile = file.getBytes();
 			DocumentApi docApi;
@@ -303,6 +352,14 @@ public class EdeliveryBS {
 			
 			LOG.log(Level.INFO, "params:"+new Gson().toJson(params));
 			LOG.log(Level.INFO, "message send");
+		}
+		catch(Exception ex){
+			DocumentsReceived docReceived;
+			docReceived= messageParams2DocReceiv( params);
+			docReceived.setDocId(-1);
+			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.FAILED.getValue()));
+			docReceived.setMessageUniqueId(msg2Get.getMessageUniqueId()); //TODO check
+			docReceivedHandler.insert(docReceived);
 		}
 		finally{
 			if(conn!=null&& closeConnection){
@@ -329,9 +386,11 @@ public class EdeliveryBS {
 		sbdParams.setParticipantIdentifierSenderScheme(msg.getSender().getParticipantIdentifierScheme());
 		sbdParams.setParticipantIdentifierSenderValue(msg.getSender().getParticipantIdentifierValue());
 		sbdParams.setScopeIdentifier(msg.getBsdScope().get(0).getSc_id());
+		sbdParams.setScopeInstance(msg.getBsdScope().get(0).getSc_instance());
 		sbdParams.setScopeType(msg.getBsdScope().get(0).getSc_type());
 		
 		sbdParams.setScopeIdentifier2(msg.getBsdScope().get(1).getSc_id());
+		sbdParams.setScopeInstance2(msg.getBsdScope().get(1).getSc_instance());
 		sbdParams.setScopeType2(msg.getBsdScope().get(1).getSc_type());
 		return sbdParams;
 	}

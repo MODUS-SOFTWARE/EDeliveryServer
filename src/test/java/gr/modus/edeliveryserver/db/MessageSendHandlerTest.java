@@ -34,14 +34,15 @@ public class MessageSendHandlerTest {
         ds.setMaxIdle(5);
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
-        //ConstantsDB.elds = ds;
-        messageSendToAp.setMessageUniqueId("5834f1c4-b538-4e3d-846f-0134fc16c4c6");
+        ConstantsDB.setElds(ds);
+        messageSendToAp.setMessageUniqueId("a5e3caf0-c0f3-441c-8a43-2df530c5b42e");
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);
         connWrapper = new ConnectionWrapper(eds);
         handler = new MessageSendHandlerDB(connWrapper);
         
-        
+      
+		
 	}
 	
 	

@@ -32,26 +32,26 @@ public class DocumentSendHandlerDB {
 	}
 	// TODO make it with entity manager.
 
-	public DocumentsSend selectByMsgId(int message_id, Connection conn) throws SQLException {
+	public DocumentsSend selectByMsgId(int mes_id, Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
-		String query = "SELECT id " + " ,actual_document_filepath " + " ,document_acceptance_period "
-				+ " ,document_authority_applicant " + " ,document_comments " + " ,document_description "
-				+ " ,document_etiquette_creation_date " + " ,document_issuing_authority "
-				+ " ,document_issuing_organization " + " ,document_language " + " ,document_organization_applicant "
-				+ " ,document_organization_etiquette " + " ,document_purpose " + " ,document_received_from_ap_date "
-				+ " ,document_receiver_authority " + " ,document_receiver_organization "
-				+ " ,document_submited_to_ap_date " + " ,document_title " + " ,document_type "
-				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
-				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
-				+ " FROM "+Tables.documents_send+" WHERE message_id = ?  ";
+		String query = "SELECT id " + " ,actual_document_filepath " + " ,doc_acceptance_period "
+				+ " ,doc_authority_applicant " + " ,doc_comments " + " ,doc_description "
+				+ " ,doc_etiquette_creation_date " + " ,doc_issuing_authority "
+				+ " ,doc_issuing_organization " + " ,doc_language " + " ,doc_organization_applicant "
+				+ " ,doc_organization_etiquette " + " ,doc_purpose " + " ,doc_received_from_ap_date "
+				+ " ,doc_receiver_authority " + " ,doc_receiver_organization "
+				+ " ,doc_submited_to_ap_date " + " ,doc_title " + " ,doc_type "
+				+ " ,doc_valid_period " + " ,mes_id " + " ,mes_unique_id "
+				+ " ,ref_document_unique_id " + " ,doc_status " + " ,docId "
+				+ " FROM "+Tables.documents_send+" WHERE mes_id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
-			preparedStatement.setInt(1, message_id);
+			preparedStatement.setInt(1, mes_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
 					docSend = map(resultSet);
@@ -67,19 +67,19 @@ public class DocumentSendHandlerDB {
 		return docSend;
 	}
 
-	public DocumentsSend selectByDocId(int message_id, Connection conn) throws SQLException {
+	public DocumentsSend selectByDocId(int mes_id, Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
 		
-		String query = "SELECT id " + " ,actual_document_filepath " + " ,document_acceptance_period "
-				+ " ,document_authority_applicant " + " ,document_comments " + " ,document_description "
-				+ " ,document_etiquette_creation_date " + " ,document_issuing_authority "
-				+ " ,document_issuing_organization " + " ,document_language " + " ,document_organization_applicant "
-				+ " ,document_organization_etiquette " + " ,document_purpose " + " ,document_received_from_ap_date "
-				+ " ,document_receiver_authority " + " ,document_receiver_organization "
-				+ " ,document_submited_to_ap_date " + " ,document_title " + " ,document_type "
-				+ " ,document_valid_period " + " ,message_id " + " ,message_unique_id "
-				+ " ,referenced_document_unique_id " + " ,document_status " + " ,docId "
+		String query = "SELECT id " + " ,actual_document_filepath " + " ,doc_acceptance_period "
+				+ " ,doc_authority_applicant " + " ,doc_comments " + " ,doc_description "
+				+ " ,doc_etiquette_creation_date " + " ,doc_issuing_authority "
+				+ " ,doc_issuing_organization " + " ,doc_language " + " ,doc_organization_applicant "
+				+ " ,doc_organization_etiquette " + " ,doc_purpose " + " ,doc_received_from_ap_date "
+				+ " ,doc_receiver_authority " + " ,doc_receiver_organization "
+				+ " ,doc_submited_to_ap_date " + " ,doc_title " + " ,doc_type "
+				+ " ,doc_valid_period " + " ,mes_id " + " ,mes_unique_id "
+				+ " ,ref_document_unique_id " + " ,doc_status " + " ,docId "
 				+ " FROM "+Tables.documents_send+" WHERE docId = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
@@ -87,7 +87,7 @@ public class DocumentSendHandlerDB {
 			closeConnection=true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
-			preparedStatement.setInt(1, message_id);
+			preparedStatement.setInt(1, mes_id);
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				if (resultSet.next()) {
 					docSend = map(resultSet);
@@ -103,7 +103,7 @@ public class DocumentSendHandlerDB {
 		return docSend;
 	}
 	public DocumentsSend updateStatus(DocumentsSend data, Connection conn) throws SQLException{
-		String sql = "update "+Tables.documents_send+" set document_status = ?  where id = ?  ";
+		String sql = "update "+Tables.documents_send+" set doc_status = ?  where id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = ConstantsDB.getElds().getConnection();
@@ -127,19 +127,19 @@ public class DocumentSendHandlerDB {
 	public DocumentsSend selectNextById(DocumentStatuses status , Connection conn) throws SQLException {
 		DocumentsSend docSend = null;
 
-		String query = "SELECT TOP 1  a.id " + " ,a.actual_document_filepath " + " ,a.document_acceptance_period "
-				+ " ,a.document_authority_applicant " + " ,a.document_comments " + " ,a.document_description "
-				+ " ,a.document_etiquette_creation_date " + " ,a.document_issuing_authority "
-				+ " ,a.document_issuing_organization " + " ,a.document_language "
-				+ " ,a.document_organization_applicant " + " ,a.document_organization_etiquette "
-				+ " ,a.document_purpose " + " ,a.document_received_from_ap_date " + " ,a.document_receiver_authority "
-				+ " ,a.document_receiver_organization " + " ,a.document_submited_to_ap_date " + " ,a.document_title "
-				+ " ,a.document_type " + " ,a.document_valid_period " + " ,a.message_id " + " ,a.message_unique_id "
-				+ " ,a.referenced_document_unique_id " + " ,a.document_status " + " ,a.docId "
+		String query = "SELECT   a.id " + " ,a.actual_document_filepath " + " ,a.doc_acceptance_period "
+				+ " ,a.doc_authority_applicant " + " ,a.doc_comments " + " ,a.doc_description "
+				+ " ,a.doc_etiquette_creation_date " + " ,a.doc_issuing_authority "
+				+ " ,a.doc_issuing_organization " + " ,a.doc_language "
+				+ " ,a.doc_organization_applicant " + " ,a.doc_organization_etiquette "
+				+ " ,a.doc_purpose " + " ,a.doc_received_from_ap_date " + " ,a.doc_receiver_authority "
+				+ " ,a.doc_receiver_organization " + " ,a.doc_submited_to_ap_date " + " ,a.doc_title "
+				+ " ,a.doc_type " + " ,a.doc_valid_period " + " ,a.mes_id " + " ,a.mes_unique_id "
+				+ " ,a.ref_document_unique_id " + " ,a.doc_status " + " ,a.docId "
 				+ " FROM "+Tables.documents_send+"  a  "
-				+ "inner join "+Tables.message_send_to_ap+"  b on   b.message_unique_id = a.message_unique_id "
-				+ "Where document_status = ? "
-				+ " ORDER BY b.id  ";
+		//		+ "inner join "+Tables.message_send_to_ap+"  b on   b.message_unique_id = a.mes_unique_id "
+				+ "Where doc_status = ? "
+				+ " ORDER BY a.id  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = ConstantsDB.getElds().getConnection();
@@ -164,16 +164,16 @@ public class DocumentSendHandlerDB {
 	public DocumentsSend map(ResultSet resultSet) throws SQLException {
 		DocumentsSend docSend = new DocumentsSend();
 		docSend.setId(resultSet.getInt("id"));
-		docSend.setMessageId(resultSet.getInt("message_id"));
-		docSend.setMessageUniqueId(resultSet.getString("message_unique_id"));
-		docSend.setDocumentDescription(resultSet.getString("document_description"));
-		docSend.setDocumentTitle(resultSet.getString("document_title"));
-		docSend.setDocumentType(resultSet.getString("document_type"));
+		docSend.setMessageId(resultSet.getInt("mes_id"));
+		docSend.setMessageUniqueId(resultSet.getString("mes_unique_id"));
+		docSend.setDocumentDescription(resultSet.getString("doc_description"));
+		docSend.setDocumentTitle(resultSet.getString("doc_title"));
+		docSend.setDocumentType(resultSet.getString("doc_type"));
 		docSend.setDocId(resultSet.getInt("docId"));
-		docSend.setDocumentIssuingAuthority(resultSet.getString("document_issuing_authority"));
-		docSend.setDocumentIssuingOrganization(resultSet.getString("document_issuing_organization"));
-		docSend.setDocumentReceiverAuthority(resultSet.getString("document_receiver_authority"));
-		docSend.setDocumentReceiverOrganization(resultSet.getString("document_receiver_organization"));
+		docSend.setDocumentIssuingAuthority(resultSet.getString("doc_issuing_authority"));
+		docSend.setDocumentIssuingOrganization(resultSet.getString("doc_issuing_organization"));
+		docSend.setDocumentReceiverAuthority(resultSet.getString("doc_receiver_authority"));
+		docSend.setDocumentReceiverOrganization(resultSet.getString("doc_receiver_organization"));
 		docSend.setActualDocumentFilepath(resultSet.getString("actual_document_filepath"));
 
 		return docSend;
@@ -181,13 +181,13 @@ public class DocumentSendHandlerDB {
 
 	public DocumentsSend insert(DocumentsSend input,Connection conn) throws SQLException {
 
-		String sql = "insert into "+Tables.documents_send+" (actual_document_filepath,docId,document_acceptance_period,document_authority_applicant,document_comments\r\n"
-				+ ",document_description,document_etiquette_creation_date,document_issuing_authority,document_issuing_organization,document_language\r\n"
-				+ ",document_organization_applicant,document_organization_etiquette,document_purpose,document_received_from_ap_date,document_receiver_authority\r\n"
-				+",document_receiver_organization,document_submited_to_ap_date,document_title,document_type,document_valid_period,message_id\r\n"
+		String sql = "insert into "+Tables.documents_send+" (actual_document_filepath,docId,doc_acceptance_period,doc_authority_applicant,doc_comments\r\n"
+				+ ",doc_description,doc_etiquette_creation_date,doc_issuing_authority,doc_issuing_organization,doc_language\r\n"
+				+ ",doc_organization_applicant,doc_organization_etiquette,doc_purpose,doc_received_from_ap_date,doc_receiver_authority\r\n"
+				+",doc_receiver_organization,doc_submited_to_ap_date,doc_title,doc_type,doc_valid_period,mes_id\r\n"
 				+
 
-				",message_unique_id,referenced_document_unique_id,document_status\r\n)" + "values (?,?,?,?,?"
+				",mes_unique_id,ref_document_unique_id,doc_status\r\n)" + "values (?,?,?,?,?"
 				+ ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?,?" + ",?,?,?,?" + ")";
 		LOGGER.log(Level.INFO,sql);
 		boolean closeConnection = false; 

@@ -4,7 +4,7 @@ public class Tables {
 
 	
 	public static String administrative_users ="ED_administrative_users";
-	public static String administrative_users_passwords ="ED_administrative_users_passwords";
+	public static String administrative_users_passwords ="ED_admin_users_passwords";
 	public static String attached_documents_received ="ED_attached_documents_received";
 	public static String document_status="ED_document_status";
 	public static String documents_received="ED_documents_received";

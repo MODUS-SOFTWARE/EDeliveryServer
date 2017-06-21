@@ -24,6 +24,7 @@ import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
+import com.edelivery.edeliveryserver.db.entityhandlers.MessageReceivedFromApHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
@@ -34,6 +35,7 @@ import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
 import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
 
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
+import gr.modus.edelivery.papyros.servers.exceptions.InvalidInputException;
 
 public class EdeliveryClientTest {
 
@@ -53,6 +55,8 @@ public class EdeliveryClientTest {
 	MessageReceivedFromAp msg2Get;
 	DocumentReceivedHandlerDB docReceivedHandler;
 	EvidenceHandlerDB eviHandler;
+	MessageReceivedFromApHandlerDB messageReceivedHandler;
+	
 	@Before
 	public void setUp() throws Exception {
 		log.info("MSSQL Tests started");
@@ -64,11 +68,12 @@ public class EdeliveryClientTest {
 		ds.setMaxIdle(5);
 		ds.setInitialSize(5);
 		ds.setValidationQuery("SELECT 1");
-
+		eDeliveryServerConfiguration = new EDeliveryServerConfiguration();
+		eDeliveryServerConfiguration.load();
 		EdeliveryDatasource eds = new EdeliveryDatasource();
 		eds.setEdeliveryDatasource(ds);
 
-		// ConstantsDB.elds = ds;
+		 ConstantsDB.setElds(ds); 
 
 		connWrapper = new ConnectionWrapper(eds);
 		messageHandler = new MessageSendHandlerDB(connWrapper);
@@ -80,13 +85,13 @@ public class EdeliveryClientTest {
 		}
 		System.out.println(new Gson().toJson(docSend));
 
-		eDeliveryServerConfiguration = new EDeliveryServerConfiguration();
-		eDeliveryServerConfiguration.load();
+		
 		docClient = new DocumentServerClient(eDeliveryServerConfiguration);
 		docReceivedHandler = new DocumentReceivedHandlerDB(connWrapper);
 		eviHandler = new EvidenceHandlerDB();
+		messageReceivedHandler = new MessageReceivedFromApHandlerDB();
 		edelBS = new EdeliveryBS(connWrapper, docSendHandler, docClient, eDeliveryServerConfiguration, bsdHandler,
-				docReceivedHandler,eviHandler);
+				docReceivedHandler,eviHandler,messageReceivedHandler);
 
 		msg2Get = new MessageReceivedFromAp();
 		msg2Get.setId(1);
@@ -94,7 +99,7 @@ public class EdeliveryClientTest {
 		// SecurityBs.doTrustToCertificates();
 	}
 
-	@Test
+	
 	public void testSendMessage() {
 
 		try (Connection conn = this.connWrapper.getConnection()) {
@@ -193,5 +198,45 @@ public class EdeliveryClientTest {
 		}
 
 	}
+	
+	
+	@Test
+	public void testReceiveNextMessage() throws XPathExpressionException {
+		try (Connection conn = ConstantsDB.getElds().getConnection()) {
+			edelBS.receiveNextMessage(conn);
+			System.out.println("end");
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 
 }

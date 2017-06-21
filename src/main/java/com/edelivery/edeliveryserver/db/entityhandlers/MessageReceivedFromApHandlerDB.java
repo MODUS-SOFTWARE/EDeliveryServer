@@ -11,6 +11,7 @@ import javax.enterprise.context.RequestScoped;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
+import com.edelivery.edeliveryserver.db.models.Tables;
 
 @RequestScoped
 public class MessageReceivedFromApHandlerDB {
@@ -27,8 +28,8 @@ public class MessageReceivedFromApHandlerDB {
 		List<MessageReceivedFromAp> msgList2Get = new ArrayList<MessageReceivedFromAp>();
 		List<MessageReceivedFromAp> msgListReceived = null;
 		String uniqueIds = "";
-		String sql = "SELECT  id,message_unique_id\r\n" + 
-				"FROM edeliveryserver.message_received_from_ap\r\n" ;
+		String sql = "SELECT  id,mes_unique_id\r\n" + 
+				"FROM "+Tables.documents_received+ "\r\n" ;
 		try (PreparedStatement preparedStatement = ConstantsDB.getElds().getConnection().prepareStatement(sql);) {
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				while (resultSet.next()) {
@@ -61,7 +62,7 @@ public class MessageReceivedFromApHandlerDB {
 	public MessageReceivedFromAp map(ResultSet resultSet) throws SQLException {
 		MessageReceivedFromAp messageReceivedFromAp = new MessageReceivedFromAp();
 		messageReceivedFromAp.setId(resultSet.getInt("id"));
-		messageReceivedFromAp.setMessageUniqueId(resultSet.getString("message_unique_id"));
+		messageReceivedFromAp.setMessageUniqueId(resultSet.getString("mes_unique_id"));
 		return messageReceivedFromAp;
 	}
 	

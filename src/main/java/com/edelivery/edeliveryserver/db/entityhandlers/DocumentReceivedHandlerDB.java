@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
+import com.edelivery.edeliveryserver.db.models.Tables;
 
 @RequestScoped
 public class DocumentReceivedHandlerDB {
@@ -31,11 +32,11 @@ public class DocumentReceivedHandlerDB {
 	public DocumentsReceived insert(DocumentsReceived input) throws SQLException {
 
 		String sql = " \r\n"
-				+ "insert into edeliveryserver.documents_received (actual_document_filepath      ,docId      ,document_acceptance_period      ,document_authority_applicant\r\n"
-				+ "      ,document_comments      ,document_description      ,document_etiquette_creation_date      ,document_issuing_authority      ,document_issuing_organization\r\n"
-				+ "      ,document_language      ,document_organization_applicant      ,document_organization_etiquette      ,document_purpose      ,document_received_from_ap_date\r\n"
-				+ "      ,document_receiver_authority      ,document_receiver_organization      ,document_submited_to_ap_date      ,document_title      ,document_type\r\n"
-				+ "      ,document_valid_period      ,message_id      ,message_unique_id      ,referenced_document_unique_id      ,document_status)\r\n"
+				+ "insert into "+Tables.documents_received+" (actual_document_filepath      ,docId      ,doc_acceptance_period      ,doc_authority_applicant\r\n"
+				+ "      ,doc_comments      ,doc_description      ,doc_etiquette_creation_date      ,doc_issuing_authority      ,doc_issuing_organization\r\n"
+				+ "      ,doc_language      ,doc_organization_applicant      ,doc_organization_etiquette      ,doc_purpose      ,doc_received_from_ap_date\r\n"
+				+ "      ,doc_receiver_authority      ,doc_receiver_organization      ,doc_submited_to_ap_date      ,doc_title      ,doc_type\r\n"
+				+ "      ,doc_valid_period      ,mes_id      ,mes_unique_id      ,ref_document_unique_id      ,doc_status)\r\n"
 				+ "	  values( ? ,? ,? ,?," + "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?,"
 				+ "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?" + "	  )" + "  ";
 		LOGGER.log(Level.INFO, sql);
