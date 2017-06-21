@@ -70,15 +70,15 @@ public class EvidencePoller {
 	}
 
 	public void init() {
-		LOG.log(Level.INFO, "Initializing Sender Poller.");
+		LOG.log(Level.INFO, "Initializing Evidence Poller.");
 		try {
 
 			// InitialContext context = new InitialContext();
 
-			poll = true;
+			poll = false;
 			start();
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "Error happen. Poller probably is not running.  ", ex);
+			LOG.log(Level.SEVERE, "Error happen. Evidence Poller probably is not running.  ", ex);
 			stop();
 		}
 	}
@@ -132,7 +132,8 @@ public class EvidencePoller {
 			//this.edeliveryUtils.sendSBD(); TODO
 			DocumentsSend docSend = docSendHandler.selectNextById(DocumentStatuses.SEND,null);
 			if(docSend!=null){
-				this.edeliveryUtils.sendSBD(docSend,null);
+				this.edeliveryUtils.receiveEvidenceAp(docSend.getMessageUniqueId(), null);
+				LOG.log(Level.INFO,"");
 			}
 			
 		} catch (Exception ex) {

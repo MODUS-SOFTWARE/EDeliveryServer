@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.models.BSDMessage;
 import com.edelivery.edeliveryserver.db.models.Participants;
 import com.edelivery.edeliveryserver.db.models.Scope;
@@ -15,13 +16,15 @@ import com.edelivery.edeliveryserver.db.models.Scope;
 public class BSDHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(DocumentSendHandlerDB.class.getName());
 	ConnectionWrapper connWrapper;
-
+	EDeliveryServerConfiguration config;
+	
 	public BSDHandlerDB() {
 	}
 
 	@Inject
-	public BSDHandlerDB(ConnectionWrapper connWrapper) {
+	public BSDHandlerDB(ConnectionWrapper connWrapper,EDeliveryServerConfiguration config) {
 		this.connWrapper = connWrapper;
+		this.config = config;
 	}
 	/*
 	 * private static int headerVersion = 1;
@@ -52,13 +55,13 @@ public class BSDHandlerDB {
 		sbd = new BSDMessage();
 		sbd.setMessage_unique_id(message_id);
 		sbd.setId(1);
-		Participants sender  = new Participants();sender.setId(1); sender.setParticipantIdentifierScheme("iso6523-actorid-upis");
-		sender.setParticipantIdentifierValue("9933:test1");
+		Participants sender  = new Participants();sender.setId(1); sender.setParticipantIdentifierScheme(config.getParID1());
+		sender.setParticipantIdentifierValue(config.getParValue1());
 		
 		Participants receiver = new Participants();
 		receiver.setId(1);
-		receiver.setParticipantIdentifierScheme("iso6523-actorid-upis");
-		receiver.setParticipantIdentifierValue("9933:test1");
+		receiver.setParticipantIdentifierScheme(config.getParID2());
+		receiver.setParticipantIdentifierValue(config.getParValue2());
 		sbd.setSender(sender);
 		sbd.setReceiver(receiver);
 		sbd.setDi_standard("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
@@ -72,13 +75,13 @@ public class BSDHandlerDB {
 		sbd.setMan_type("maniTypeQualCode");
 		sbd.setMan_uni("uniformResourceIdentifier");
 		Scope s1 = new Scope(); s1.setId(1);
-		s1.setSc_id("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2:: Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn: www.peppol.eu:bis:peppol4a:ver2.0::2.1");
+		s1.setSc_id(" http://uri.etsi.org/02640/soapbinding/v2#::REMDispatch:2");
 		s1.setSc_instance("Instance");
 		s1.setSc_type("DOCUMENTID");
 		
 		
 		Scope s2 = new Scope(); s2.setId(2);
-		s2.setSc_id("urn:www.cenbii.eu:profile:bii04:ver2.0");
+		s2.setSc_id("urn:cef-eDelivery.europa.eu::generalERDS:ver1.0");
 		s2.setSc_instance("Instance");
 		s2.setSc_type("PROCESSID");
 		List<Scope> scoped = new ArrayList<Scope>();

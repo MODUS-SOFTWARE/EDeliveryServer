@@ -74,7 +74,7 @@ public class EdeliveryClientTest {
 		messageHandler = new MessageSendHandlerDB(connWrapper);
 		docSendHandler = new DocumentSendHandlerDB(connWrapper);
 		bs = new SendMessageBS(docSendHandler, messageHandler, connWrapper);
-		bsdHandler = new BSDHandlerDB(connWrapper);
+		bsdHandler = new BSDHandlerDB(connWrapper, eDeliveryServerConfiguration);
 		try (Connection conn = connWrapper.getConnection()) {
 			docSend = bs.selectNextById(DocumentStatuses.QUEUED, conn);
 		}
@@ -94,6 +94,7 @@ public class EdeliveryClientTest {
 		// SecurityBs.doTrustToCertificates();
 	}
 
+	@Test
 	public void testSendMessage() {
 
 		try (Connection conn = this.connWrapper.getConnection()) {
@@ -122,7 +123,7 @@ public class EdeliveryClientTest {
 
 	}
 
-	@Test
+	
 	public void testGetEviApMessage() {
 
 		try  {

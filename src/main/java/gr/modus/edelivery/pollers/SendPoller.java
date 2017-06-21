@@ -96,7 +96,7 @@ public class SendPoller {
 
 
 	private void start() throws Exception {
-		LOG.log(Level.INFO, "Indexing poller started.");
+		
 
 		long loopall = 1;
 		long loopnotif = 1;

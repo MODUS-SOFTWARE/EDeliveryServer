@@ -141,4 +141,23 @@ public class EDeliveryServerConfiguration {
     public String getConnectorPassword(){
     	return this.EDeliveryServerProperties.getString("connectorPassword");
     }
+    
+    public String getParID1(){
+    	return this.EDeliveryServerProperties.getString("parID1");
+    }
+    
+    public String getParValue1(){
+    	return this.EDeliveryServerProperties.getString("parVal1");
+    }
+    
+    public String getParID2(){
+    	return this.EDeliveryServerProperties.getString("parID2");
+    }
+    
+    public String getParValue2(){
+    	return this.EDeliveryServerProperties.getString("parVal2");
+    }
+    
+    
+    
 }
