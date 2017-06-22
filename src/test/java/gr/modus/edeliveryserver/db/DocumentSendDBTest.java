@@ -94,7 +94,7 @@ public class DocumentSendDBTest {
 		Connection conn = null;
 		try{
 			conn = this.connWrapper.getConnection();
-			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND.getValue()));
+			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND.getValue()+""));
 			dhan.updateStatus(docSend, conn);
 			log.info("end updateStatus");
 		}

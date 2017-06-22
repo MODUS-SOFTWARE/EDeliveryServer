@@ -83,7 +83,7 @@ public class EdeliveryClientTest {
 		try (Connection conn = connWrapper.getConnection()) {
 			docSend = bs.selectNextById(DocumentStatuses.QUEUED, conn);
 		}
-		System.out.println(new Gson().toJson(docSend));
+		//System.out.println(new Gson().toJson(docSend));
 
 		
 		docClient = new DocumentServerClient(eDeliveryServerConfiguration);
@@ -193,6 +193,9 @@ public class EdeliveryClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidInputException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

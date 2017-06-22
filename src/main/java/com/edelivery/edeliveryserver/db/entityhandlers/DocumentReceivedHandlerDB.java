@@ -36,9 +36,9 @@ public class DocumentReceivedHandlerDB {
 				+ "      ,doc_comments      ,doc_description      ,doc_etiquette_creation_date      ,doc_issuing_authority      ,doc_issuing_organization\r\n"
 				+ "      ,doc_language      ,doc_organization_applicant      ,doc_organization_etiquette      ,doc_purpose      ,doc_received_from_ap_date\r\n"
 				+ "      ,doc_receiver_authority      ,doc_receiver_organization      ,doc_submited_to_ap_date      ,doc_title      ,doc_type\r\n"
-				+ "      ,doc_valid_period      ,mes_id      ,mes_unique_id      ,ref_document_unique_id      ,doc_status)\r\n"
+				+ "      ,doc_valid_period      ,mes_id      ,mes_unique_id   ,mes_ap_unique_id   ,ref_document_unique_id      ,doc_status)\r\n"
 				+ "	  values( ? ,? ,? ,?," + "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?,"
-				+ "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?" + "	  )" + "  ";
+				+ "			  ? ,? ,? ,? ,?," + "			  ? ,? ,? ,? ,?,?" + "	  )" + "  ";
 		LOGGER.log(Level.INFO, sql);
 		try (Connection conn = ConstantsDB.getElds().getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql,
 				Statement.RETURN_GENERATED_KEYS);) {
@@ -75,16 +75,17 @@ public class DocumentReceivedHandlerDB {
 			preparedStatement.setLong(20, documentValidPeriod);
 			preparedStatement.setInt(21, input.getMessageId());
 			preparedStatement.setString(22, input.getMessageUniqueId());
-			preparedStatement.setString(23, input.getReferencedDocumentUniqueId());
-			preparedStatement.setString(24, input.getDocumentStatus().getStatus());
+			preparedStatement.setString(23, input.getMessageUniqueApId());
+			preparedStatement.setString(24, input.getReferencedDocumentUniqueId());
+			preparedStatement.setString(25, input.getDocumentStatus().getStatus());
 
 			preparedStatement.executeUpdate();
-			try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
+			/*try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
 				if (rs.next()) {
 					input.setId(rs.getInt(1));
 				}
 
-			}
+			}*/
 
 			return input;
 		}

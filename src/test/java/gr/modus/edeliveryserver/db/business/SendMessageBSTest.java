@@ -47,23 +47,23 @@ public class SendMessageBSTest {
         ds.setInitialSize(5);
         ds.setValidationQuery("SELECT 1");
         
-        //ConstantsDB.elds = ds;
+        ConstantsDB.setElds(ds);
         String actualDocumentFilepath = "F:/testDocument/pdf/d_ok_imi.pdf";
         docSend.setActualDocumentFilepath(actualDocumentFilepath);
-        docSend.setDocId(55132);
+        docSend.setDocId(55161);
         docSend.setDocumentComments("comments");
         UUID uniqueId = UUID.randomUUID();
-        docSend.setMessageId(55132);
+        docSend.setMessageId(55161);
         docSend.setMessageUniqueId(uniqueId.toString());
-        docSend.setDocumentTitle("title");
+        docSend.setDocumentTitle("Java Test");
         docSend.setDocumentType("type");
-        docSend.setDocumentOrganizationEtiquette("test etiquette");
-        DocumentStatus docStatus = new DocumentStatus();
+        docSend.setDocumentOrganizationEtiquette("1234");
+        DocumentStatus docStatus = new DocumentStatus("0");
         docStatus.setId(1);
         docSend.setDocumentStatus(docStatus);
         
         
-        messageSendToAp.setMessageUniqueId("c97f125e-d5d1-4407-bd00-ee309628e58a");
+        messageSendToAp.setMessageUniqueId("c97f125e-d5d1-4407-bd00-ee309628e58b");
         EdeliveryDatasource eds = new EdeliveryDatasource(); 
         eds.setEdeliveryDatasource(ds);
         connWrapper = new ConnectionWrapper(eds);
@@ -76,7 +76,7 @@ public class SendMessageBSTest {
 	
 	
 	
-	
+	@Test
 	public void insertSend() throws SQLException{
 		Connection conn= null;
 		try{
@@ -97,7 +97,7 @@ public class SendMessageBSTest {
 		try{
 			conn = this.connWrapper.getConnection();
 			DocumentsSend docSend = bs.selectNextById(DocumentStatuses.QUEUED,conn);
-			System.out.println(new Gson().toJson(docSend));
+			//System.out.println(new Gson().toJson(docSend));
 		}
 		finally{
 			if(conn != null){

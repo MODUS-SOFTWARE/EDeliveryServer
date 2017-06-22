@@ -35,10 +35,12 @@ public class DocumentStatus implements Serializable {
     public DocumentStatus() {
     }
 
-    public DocumentStatus(Integer id) {
-        this.id = id;
+    public DocumentStatus(String status) {
+        this.status = status;
     }
 
+    
+    
     public Integer getId() {
         return id;
     }

@@ -206,7 +206,7 @@ public class EdeliveryBS {
 			
 			LOG.log(Level.INFO, new Gson().toJson(responseC.get()));
 			LOG.log(Level.INFO, "message send");
-			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND .getValue()));
+			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND .getValue()+""));
 			docSendHd.updateStatus(docSend, null);
 		}
 		finally{
@@ -230,7 +230,7 @@ public class EdeliveryBS {
 		try{
 			CompletableFuture<Object> result = deliveryClient.getMessageEvidenceAp(msgId, auth, true);
 			String msg = (String)result.get();
-			System.out.println(msg);
+			//System.out.println(msg);
 			DeliveryNonDeliveryToRecipientExtractor wrapper= new DeliveryNonDeliveryToRecipientExtractor(msg);
 			EvidenceParams evidenceParams = wrapper.extractParams();
 			
@@ -257,7 +257,7 @@ public class EdeliveryBS {
 			
 			
 			LOG.log(Level.INFO, "params:"+new Gson().toJson(evi));
-			LOG.log(Level.INFO, "message send");
+			LOG.log(Level.INFO, "receiveEvidenceAp received");
 		}
 		finally{
 			if(conn!=null&& closeConnection){
@@ -270,8 +270,10 @@ public class EdeliveryBS {
 	public void receiveNextMessage(Connection conn) throws SQLException, InterruptedException, ExecutionException, XPathExpressionException, JAXBException, DatatypeConfigurationException, IOException, DSException, InvalidInputException{
 		List<MessageReceivedFromAp> all = receivePending( conn);
 		List<MessageReceivedFromAp> pending =  messageReceivedHandler.select(all);
-		MessageReceivedFromAp msg = pending.get(0);
-		receiveSBD(msg,conn);
+		if(pending!=null && pending.size()>0){
+			MessageReceivedFromAp msg = pending.get(0);
+			receiveSBD(msg,conn);
+		}
 	}
 	public List<MessageReceivedFromAp> receivePending(Connection conn) throws SQLException, InterruptedException, ExecutionException{
 		/*CompletableFuture<Messages> result = deliveryClient.getMesaggesPending(auth);
@@ -292,7 +294,7 @@ public class EdeliveryBS {
 				String messageUniqueId = msg.getMessages().getMessageId()[i];
 				//System.out.println(s);
 				MessageReceivedFromAp messageAp= new MessageReceivedFromAp();
-				messageAp.setMessageUniqueId(messageUniqueId);
+				messageAp.setMessageApUniqueId(messageUniqueId);
 				all.add(messageAp);	
 			}
 			/*List<MessageReceivedFromAp> all*/
@@ -315,9 +317,9 @@ public class EdeliveryBS {
 		}
 		MessageParams params = null;
 		try{
-			CompletableFuture<Object> result = deliveryClient.getMessageDefault(msg2Get.getMessageUniqueId(), auth,true);
+			CompletableFuture<Object> result = deliveryClient.getMessageDefault(msg2Get.getMessageApUniqueId(), auth,true);
 			String msg = (String)result.get();
-			System.out.println(msg);
+			//System.out.println(msg);
 			SBDMessageWrapper wrapper= new SBDMessageWrapper(msg);
 			String payLoad = wrapper.getPayload(true);
 			DispatchExtractor dispExtractor = new DispatchExtractor(payLoad); 
@@ -341,9 +343,11 @@ public class EdeliveryBS {
 			DocumentsReceived docReceived;
 			docReceived= messageParams2DocReceiv( params);
 			docReceived.setDocId(docApi.getId());
-			docReceived.setMessageUniqueId(msg2Get.getMessageUniqueId()); //TODO check
+			docReceived.setMessageUniqueId(params.getMsgId()); //TODO check
+			docReceived.setMessageUniqueApId(msg2Get.getMessageApUniqueId());
+			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED .getValue()+""));
 			docReceivedHandler.insert(docReceived);
-			
+			this.messageReceivedHandler.insert( docReceived , conn);
 			/*File f = new File("c:/tmp/"+filename);
 			try(FileOutputStream fout=new FileOutputStream(f);InputStream in = new ByteArrayInputStream(valueDecoded);){
 				IOUtils.copy(in, fout);
@@ -351,15 +355,17 @@ public class EdeliveryBS {
 			
 			
 			LOG.log(Level.INFO, "params:"+new Gson().toJson(params));
-			LOG.log(Level.INFO, "message send");
+			LOG.log(Level.INFO, "receiveSBD");
 		}
 		catch(Exception ex){
 			DocumentsReceived docReceived;
 			docReceived= messageParams2DocReceiv( params);
 			docReceived.setDocId(-1);
-			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.FAILED.getValue()));
-			docReceived.setMessageUniqueId(msg2Get.getMessageUniqueId()); //TODO check
+			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.FAILED.getValue()+""));
+			
+			docReceived.setMessageUniqueApId(msg2Get.getMessageApUniqueId());; //TODO check
 			docReceivedHandler.insert(docReceived);
+			this.messageReceivedHandler.insert( docReceived , conn);
 		}
 		finally{
 			if(conn!=null&& closeConnection){
@@ -447,11 +453,12 @@ public class EdeliveryBS {
 		docReceived.setDocumentReceivedFromApDate(new Date()); //current 
 		docReceived.setDocumentReceiverAuthority(params.getDestinatorEmail());
 		docReceived.setDocumentReceiverOrganization(params.getDestinatorName());
-		docReceived.setDocumentStatus(new DocumentStatus(2));//TODO
+		docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()+""));//TODO
 		docReceived.setDocumentSubmitedToApDate(null);
 		docReceived.setDocumentTitle(params.getNormalizedDocSubject()==null?"-":params.getNormalizedDocSubject());
 		docReceived.setDocumentType("-");//TODO
 		docReceived.setDocumentValidPeriod(null);
+		docReceived.setMessageUniqueId(params.getMsgId());
 		//docReceived.setMessageId(params.getMsgId()); TODO 
 		//docReceived.setMessageUniqueId(params.getMsgId());
 		return docReceived;

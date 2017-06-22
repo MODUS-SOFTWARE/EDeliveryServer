@@ -26,8 +26,17 @@ public class MessageReceivedFromAp implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;
     private String messageUniqueId;
+    private String messageApUniqueId;
+    
+    public String getMessageApUniqueId() {
+		return messageApUniqueId;
+	}
 
-    public MessageReceivedFromAp() {
+	public void setMessageApUniqueId(String messageApUniqueId) {
+		this.messageApUniqueId = messageApUniqueId;
+	}
+
+	public MessageReceivedFromAp() {
     }
 
     public MessageReceivedFromAp(Integer id) {

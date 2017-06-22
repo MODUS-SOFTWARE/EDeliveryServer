@@ -46,7 +46,10 @@ public class DocumentsReceived implements Serializable {
     private Integer id;
     private int messageId;
     private String messageUniqueId;
-    private String documentOrganizationEtiquette;
+    private String messageUniqueApId;
+   
+
+	private String documentOrganizationEtiquette;
     private String documentType;
     private String documentTitle;
     private String documentPurpose;
@@ -86,6 +89,14 @@ public class DocumentsReceived implements Serializable {
         this.documentTitle = documentTitle;
     }
 
+    public String getMessageUniqueApId() {
+		return messageUniqueApId;
+	}
+
+	public void setMessageUniqueApId(String messageUniqueApId) {
+		this.messageUniqueApId = messageUniqueApId;
+	}
+	
     public Integer getId() {
         return id;
     }

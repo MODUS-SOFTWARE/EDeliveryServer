@@ -210,9 +210,10 @@ CREATE TABLE [dbo].[ED_documents_received](
 	[doc_submited_to_ap_date] [datetime] NULL,
 	[doc_title] [varchar](255) NOT NULL,
 	[doc_type] [varchar](255) NOT NULL,
-	[doc_valid_period] [datetime2](7) NULL,
+	[doc_valid_period] [datetime] NULL,
 	[mes_id] [int] NOT NULL,
 	[mes_unique_id] [varchar](255) NOT NULL,
+	[mes_ap_unique_id] [varchar](255) NOT NULL,
 	[ref_document_unique_id] [varchar](255) NULL,
 	[doc_status] [int] NULL
 ) ON [PRIMARY]

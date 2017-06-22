@@ -103,7 +103,7 @@ public class DocumentSendHandlerDB {
 		return docSend;
 	}
 	public DocumentsSend updateStatus(DocumentsSend data, Connection conn) throws SQLException{
-		String sql = "update "+Tables.documents_send+" set doc_status = ?  where id = ?  ";
+		String sql = "update "+Tables.documents_send+" set doc_status = ?  where mes_unique_id = ?  ";
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = ConstantsDB.getElds().getConnection();
@@ -111,8 +111,8 @@ public class DocumentSendHandlerDB {
 			closeConnection = true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
-			preparedStatement.setInt(1, data.getDocumentStatus().getId());
-			preparedStatement.setInt(2, data.getId());
+			preparedStatement.setString(1, data.getDocumentStatus().getStatus());
+			preparedStatement.setString(2, data.getMessageUniqueId());
 			preparedStatement.executeUpdate();
 			conn.commit();
 		}
@@ -233,12 +233,12 @@ public class DocumentSendHandlerDB {
 			preparedStatement.setString(24, input.getDocumentStatus().getStatus());
 
 			preparedStatement.executeUpdate();
-			try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
+			/*try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
 				if (rs.next()) {
 					input.setId(rs.getInt(1));
 				}
 
-			}
+			}*/ //Πρόβλημα στην oracle
 
 			return input;
 		}
