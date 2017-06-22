@@ -6,9 +6,10 @@ import java.sql.SQLException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+ 
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
+import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
@@ -23,16 +24,16 @@ public class SendMessageBS {
 	@Inject
 	MessageSendHandlerDB messageHandler;
 	
-	ConnectionWrapper connWrapper;
+	 
 	
 	public SendMessageBS(){
 		
 	}
 	@Inject
 	public SendMessageBS(DocumentSendHandlerDB   docSendHandler, MessageSendHandlerDB messageHandler
-			,ConnectionWrapper connWrapper	
+			 
 			){
-		this.connWrapper  = connWrapper;
+		 
 		this.docSendHandler = docSendHandler;
 		this.messageHandler = messageHandler;
 	}
@@ -40,7 +41,7 @@ public class SendMessageBS {
 	public void insertMessage2Send(DocumentsSend docSend, Connection conn) throws SQLException{
 		boolean closeConnection =false;
 		if(conn==null){ //TODO change 
-			conn = connWrapper.getConnection();
+			conn = ConstantsDB.getElds().getConnection();
 			closeConnection=true;
 		}
 		try{

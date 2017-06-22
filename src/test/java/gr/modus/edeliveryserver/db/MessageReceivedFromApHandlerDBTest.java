@@ -9,7 +9,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageReceivedFromApHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
@@ -17,7 +17,7 @@ import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.google.gson.Gson;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 public class MessageReceivedFromApHandlerDBTest {
 	private static final Logger log = Logger.getLogger(MessageSendHandlerTest.class.getName());
@@ -26,7 +26,7 @@ public class MessageReceivedFromApHandlerDBTest {
 	List<MessageReceivedFromAp> messageReceivedFromApList = new ArrayList<MessageReceivedFromAp>();
 	
 	MessageReceivedFromApHandlerDB handler;
-	ConnectionWrapper connWrapper;
+	
 	
 	
 	@Before
@@ -56,10 +56,7 @@ public class MessageReceivedFromApHandlerDBTest {
         messageReceivedFromApList.add(msg2);
         
         
-        EdeliveryDatasource eds = new EdeliveryDatasource(); 
-        eds.setEdeliveryDatasource(ds);
-        connWrapper = new ConnectionWrapper(eds);
-        handler = new MessageReceivedFromApHandlerDB(connWrapper);
+        handler = new MessageReceivedFromApHandlerDB();
         
         
 	}

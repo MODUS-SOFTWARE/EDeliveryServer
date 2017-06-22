@@ -11,13 +11,13 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 import gr.modus.edeliveryclient.EdeliveryClientTest;
 
@@ -28,7 +28,7 @@ public class DocumentSendDBTest {
 	DocumentsSend docSend = new DocumentsSend();
 	
 	DocumentSendHandlerDB dhan;
-	ConnectionWrapper connWrapper ; 
+	
 	@Before
 	public void setUp() throws Exception {
 		log.info("MSSQL Tests started");
@@ -59,11 +59,7 @@ public class DocumentSendDBTest {
         docSend.setId(7);
         
         docSend.setDocumentStatus(docStatus);
-        EdeliveryDatasource eds = new EdeliveryDatasource(); 
-        eds.setEdeliveryDatasource(ds);
-
-        connWrapper = new ConnectionWrapper(eds);
-        dhan = new DocumentSendHandlerDB(connWrapper);
+            dhan = new DocumentSendHandlerDB();
         
         
 	}
@@ -76,7 +72,7 @@ public class DocumentSendDBTest {
 		boolean closeConnection=false;
 		try{
 			if(conn==null){
-				conn = this.connWrapper.getConnection();
+			
 				closeConnection=true;
 			}
 			dhan.insert(docSend,conn);
@@ -93,7 +89,7 @@ public class DocumentSendDBTest {
 	public void updateStatus() throws SQLException{
 		Connection conn = null;
 		try{
-			conn = this.connWrapper.getConnection();
+			
 			docSend.setDocumentStatus(new DocumentStatus(DocumentStatuses.SEND.getValue()+""));
 			dhan.updateStatus(docSend, conn);
 			log.info("end updateStatus");

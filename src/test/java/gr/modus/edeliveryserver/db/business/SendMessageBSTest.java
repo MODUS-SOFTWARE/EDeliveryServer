@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.edelivery.edeliveryserver.business.SendMessageBS;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
@@ -19,7 +19,7 @@ import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.google.gson.Gson;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 import gr.modus.edeliveryserver.db.MessageSendHandlerTest;
 
@@ -31,7 +31,7 @@ public class SendMessageBSTest {
 	MessageSendToAp messageSendToAp = new MessageSendToAp();
 	DocumentsSend docSend = new DocumentsSend();
 	SendMessageBS bs;
-	ConnectionWrapper connWrapper;
+	
 	DocumentSendHandlerDB   docSendHandler;
 	
 	@Before
@@ -64,12 +64,9 @@ public class SendMessageBSTest {
         
         
         messageSendToAp.setMessageUniqueId("c97f125e-d5d1-4407-bd00-ee309628e58b");
-        EdeliveryDatasource eds = new EdeliveryDatasource(); 
-        eds.setEdeliveryDatasource(ds);
-        connWrapper = new ConnectionWrapper(eds);
-        messageHandler = new MessageSendHandlerDB(connWrapper);
-        docSendHandler = new DocumentSendHandlerDB(connWrapper);
-        bs = new SendMessageBS( docSendHandler , messageHandler,connWrapper);
+        messageHandler = new MessageSendHandlerDB();
+        docSendHandler = new DocumentSendHandlerDB();
+        bs = new SendMessageBS( docSendHandler , messageHandler);
         
         
 	}
@@ -80,7 +77,7 @@ public class SendMessageBSTest {
 	public void insertSend() throws SQLException{
 		Connection conn= null;
 		try{
-			conn = this.connWrapper.getConnection();
+			conn =ConstantsDB.getElds().getConnection();
 			bs.insertMessage2Send(docSend,conn);
 		}
 		finally{
@@ -95,7 +92,7 @@ public class SendMessageBSTest {
 	public void selectNext() throws SQLException{
 		Connection conn = null;
 		try{
-			conn = this.connWrapper.getConnection();
+			conn =ConstantsDB.getElds().getConnection();
 			DocumentsSend docSend = bs.selectNextById(DocumentStatuses.QUEUED,conn);
 			//System.out.println(new Gson().toJson(docSend));
 		}

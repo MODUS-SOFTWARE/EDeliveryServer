@@ -1,4 +1,5 @@
 package com.edelivery.edeliveryserver.db.entityhandlers;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,18 +18,14 @@ import com.edelivery.edeliveryserver.db.models.Tables;
 public class MessageSendHandlerDB {
 	
 	private static final Logger LOGGER = Logger.getLogger( MessageSendHandlerDB.class.getName() );
-	ConnectionWrapper connWrapper;
+	 
 	public MessageSendHandlerDB() {
 	}
-	
-	@Inject
-	public MessageSendHandlerDB(ConnectionWrapper connWrapper) {
-		this.connWrapper = connWrapper;
-	}
+	 
 	public MessageSendToAp insert(MessageSendToAp input) throws SQLException {
 		String sql = "insert into "+Tables.message_send_to_ap+" (message_unique_id) values(?)";
 		LOGGER.log(Level.INFO,sql);
-		try (PreparedStatement preparedStatement = ConstantsDB.getElds().getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
+		try (Connection conn = ConstantsDB.getElds().getConnection() ; PreparedStatement preparedStatement =conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getMessageUniqueId());
 			preparedStatement.executeUpdate();
 			try (ResultSet rs = preparedStatement.getGeneratedKeys();) {

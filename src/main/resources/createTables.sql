@@ -202,7 +202,7 @@ CREATE TABLE [dbo].[ED_documents_received](
 	[doc_issuing_organization] [varchar](255) NULL,
 	[doc_language] [varchar](255) NULL,
 	[doc_organization_applicant] [varchar](255) NULL,
-	[doc_organization_etiquette] [varchar](255) NOT NULL,
+	[doc_organization_etiquette] [varchar](255)  NULL,
 	[doc_purpose] [varchar](255) NULL,
 	[doc_received_from_ap_date] [datetime] NULL,
 	[doc_receiver_authority] [varchar](255) NULL,

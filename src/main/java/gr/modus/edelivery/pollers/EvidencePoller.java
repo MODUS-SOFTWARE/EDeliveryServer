@@ -21,11 +21,11 @@ import javax.ws.rs.core.Response.Status;
 
 import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+ 
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 
 
@@ -45,22 +45,22 @@ public class EvidencePoller {
 	private Boolean poll;
 	EdeliverySettings settings;
 	EdeliveryBS edeliveryUtils;
-	EdeliveryDatasource edatasource;
+
 	DocumentSendHandlerDB   docSendHandler;
-	ConnectionWrapper connWrapper;
+	 
 	
 	public EvidencePoller(){}
 	
 	
 	@Inject
-	public EvidencePoller(EdeliverySettings settings,EdeliveryBS edeliveryUtils,EdeliveryDatasource edatasource,DocumentSendHandlerDB   docSendHandler
-			,ConnectionWrapper connWrapper
+	public EvidencePoller(EdeliverySettings settings,EdeliveryBS edeliveryUtils,DocumentSendHandlerDB   docSendHandler
+			 
 			){
 		this.settings=settings;
 		this.edeliveryUtils = edeliveryUtils;
-		this.edatasource =edatasource ;
+	
 		this.docSendHandler = docSendHandler;
-		this.connWrapper = connWrapper;
+		 
 		
 	}
 	

@@ -9,14 +9,14 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatus;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.Evidence;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 import gr.modus.edeliveryclient.EdeliveryClientTest;
 
@@ -28,7 +28,7 @@ public class EvidenceDBTest {
 	
 	EvidenceHandlerDB evidenceHan;
 	
-	ConnectionWrapper connWrapper ; 
+ 
 	@Before
 	public void setUp() throws Exception {
 		log.info("MSSQL Tests started");

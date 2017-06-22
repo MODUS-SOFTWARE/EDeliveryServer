@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
-import com.modus.edeliveryserver.db.factories.PapyrosDataSource;
+
 
 import gr.modus.edelivery.pollers.SendPoller;
 

@@ -15,15 +15,15 @@ import com.edelivery.edeliveryserver.db.models.Scope;
 @RequestScoped
 public class BSDHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(DocumentSendHandlerDB.class.getName());
-	ConnectionWrapper connWrapper;
+	 
 	EDeliveryServerConfiguration config;
 	
 	public BSDHandlerDB() {
 	}
 
 	@Inject
-	public BSDHandlerDB(ConnectionWrapper connWrapper,EDeliveryServerConfiguration config) {
-		this.connWrapper = connWrapper;
+	public BSDHandlerDB( EDeliveryServerConfiguration config) {
+		 
 		this.config = config;
 	}
 	/*

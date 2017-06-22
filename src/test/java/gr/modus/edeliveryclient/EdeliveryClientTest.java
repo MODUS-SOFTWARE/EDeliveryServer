@@ -20,7 +20,7 @@ import com.edelivery.edeliveryserver.business.SecurityBs;
 import com.edelivery.edeliveryserver.business.SendMessageBS;
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.entityhandlers.BSDHandlerDB;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
@@ -31,7 +31,7 @@ import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.google.gson.Gson;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
 
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
@@ -44,7 +44,7 @@ public class EdeliveryClientTest {
 
 	DocumentsSend docSend;
 	SendMessageBS bs;
-	ConnectionWrapper connWrapper;
+	
 	DocumentSendHandlerDB docSendHandler;
 	MessageSendHandlerDB messageHandler;
 	DocumentServerClient docClient;
@@ -70,27 +70,25 @@ public class EdeliveryClientTest {
 		ds.setValidationQuery("SELECT 1");
 		eDeliveryServerConfiguration = new EDeliveryServerConfiguration();
 		eDeliveryServerConfiguration.load();
-		EdeliveryDatasource eds = new EdeliveryDatasource();
-		eds.setEdeliveryDatasource(ds);
+	
+		ConstantsDB.setElds(ds); 
 
-		 ConstantsDB.setElds(ds); 
-
-		connWrapper = new ConnectionWrapper(eds);
-		messageHandler = new MessageSendHandlerDB(connWrapper);
-		docSendHandler = new DocumentSendHandlerDB(connWrapper);
-		bs = new SendMessageBS(docSendHandler, messageHandler, connWrapper);
-		bsdHandler = new BSDHandlerDB(connWrapper, eDeliveryServerConfiguration);
-		try (Connection conn = connWrapper.getConnection()) {
-			docSend = bs.selectNextById(DocumentStatuses.QUEUED, conn);
-		}
+		
+		messageHandler = new MessageSendHandlerDB();
+		docSendHandler = new DocumentSendHandlerDB();
+		bs = new SendMessageBS(docSendHandler, messageHandler);
+		bsdHandler = new BSDHandlerDB(eDeliveryServerConfiguration);
+		
+		docSend = bs.selectNextById(DocumentStatuses.QUEUED, null);
+		
 		//System.out.println(new Gson().toJson(docSend));
 
 		
 		docClient = new DocumentServerClient(eDeliveryServerConfiguration);
-		docReceivedHandler = new DocumentReceivedHandlerDB(connWrapper);
+		docReceivedHandler = new DocumentReceivedHandlerDB();
 		eviHandler = new EvidenceHandlerDB();
 		messageReceivedHandler = new MessageReceivedFromApHandlerDB();
-		edelBS = new EdeliveryBS(connWrapper, docSendHandler, docClient, eDeliveryServerConfiguration, bsdHandler,
+		edelBS = new EdeliveryBS( docSendHandler, docClient, eDeliveryServerConfiguration, bsdHandler,
 				docReceivedHandler,eviHandler,messageReceivedHandler);
 
 		msg2Get = new MessageReceivedFromAp();
@@ -102,7 +100,7 @@ public class EdeliveryClientTest {
 	
 	public void testSendMessage() {
 
-		try (Connection conn = this.connWrapper.getConnection()) {
+		try (Connection conn = ConstantsDB.getElds() .getConnection()) {
 			edelBS.sendSBD(docSend, conn);
 			System.out.println("end");
 
@@ -167,7 +165,7 @@ public class EdeliveryClientTest {
 	}
 
 	public void testReceiveMessage() throws XPathExpressionException {
-		try (Connection conn = this.connWrapper.getConnection()) {
+		try (Connection conn = ConstantsDB.getElds().getConnection()) {
 			edelBS.receiveSBD(msg2Get, conn);
 			System.out.println("end");
 

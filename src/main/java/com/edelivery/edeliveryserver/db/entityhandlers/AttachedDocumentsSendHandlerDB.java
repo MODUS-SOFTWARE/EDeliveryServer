@@ -16,11 +16,11 @@ import com.edelivery.edeliveryserver.db.models.Tables;
 
 public class AttachedDocumentsSendHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger( AttachedDocumentsSendHandlerDB.class.getName() );
-	ConnectionWrapper connWrapper;
+	 
 	
 	@Inject
-	public AttachedDocumentsSendHandlerDB(ConnectionWrapper connWrapper) {
-		this.connWrapper = connWrapper;
+	public AttachedDocumentsSendHandlerDB( ) {
+	 
 	}
 	// TODO make it with entity manager.
 

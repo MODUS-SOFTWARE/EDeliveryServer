@@ -16,20 +16,16 @@ import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.Tables;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 @RequestScoped
 public class DocumentSendHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger( DocumentSendHandlerDB.class.getName() );
-	ConnectionWrapper connWrapper;
+ 
 
 	public DocumentSendHandlerDB() {
 	}
-
-	@Inject
-	public DocumentSendHandlerDB(ConnectionWrapper connWrapper) {
-		this.connWrapper = connWrapper;
-	}
+ 
 	// TODO make it with entity manager.
 
 	public DocumentsSend selectByMsgId(int mes_id, Connection conn) throws SQLException {
@@ -107,14 +103,12 @@ public class DocumentSendHandlerDB {
 		boolean closeConnection = false;
 		if(conn==null){
 			conn = ConstantsDB.getElds().getConnection();
-			conn.setAutoCommit(false);
 			closeConnection = true;
 		}
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
 			preparedStatement.setString(1, data.getDocumentStatus().getStatus());
 			preparedStatement.setString(2, data.getMessageUniqueId());
 			preparedStatement.executeUpdate();
-			conn.commit();
 		}
 		finally{
 			if(conn !=null && closeConnection){
@@ -240,13 +234,14 @@ public class DocumentSendHandlerDB {
 
 			}*/ //Πρόβλημα στην oracle
 
-			return input;
+			
 		}
 		finally{
 			if(conn !=null && closeConnection){
 				conn.close();
 			}
 		}
+		return input;
 		
 	}
 

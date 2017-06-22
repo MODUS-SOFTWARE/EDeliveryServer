@@ -25,11 +25,7 @@ public class MessageReceivedFromApHandlerDB {
 	public MessageReceivedFromApHandlerDB(){
 		
 	}
-	ConnectionWrapper connWrapper; 
-	public MessageReceivedFromApHandlerDB(ConnectionWrapper connWrap){
-		this.connWrapper = connWrap;
-	}
-	
+	 
 	public List<MessageReceivedFromAp> select(List<MessageReceivedFromAp> all) throws SQLException{
 		List<MessageReceivedFromAp> msgList2Get = new ArrayList<MessageReceivedFromAp>();
 		List<MessageReceivedFromAp> msgListReceived = new ArrayList<MessageReceivedFromAp>();
@@ -37,7 +33,7 @@ public class MessageReceivedFromApHandlerDB {
 		String sql = "SELECT  id,mes_unique_id,mes_ap_unique_id\r\n" + 
 				"FROM "+Tables.documents_received+ "\r\n"
 				+ "where mes_ap_unique_id is not null " ;
-		try (PreparedStatement preparedStatement = ConstantsDB.getElds().getConnection().prepareStatement(sql);) {
+		try (Connection conn = ConstantsDB.getElds().getConnection() ;PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
 			try (ResultSet resultSet = preparedStatement.executeQuery();) {
 				while (resultSet.next()) {
 					MessageReceivedFromAp mp = map(resultSet);

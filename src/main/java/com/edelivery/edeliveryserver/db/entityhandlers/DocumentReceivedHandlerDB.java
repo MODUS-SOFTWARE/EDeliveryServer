@@ -19,15 +19,11 @@ import com.edelivery.edeliveryserver.db.models.Tables;
 public class DocumentReceivedHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(DocumentReceivedHandlerDB.class.getName());
 
-	ConnectionWrapper connWrapper;
+	 
 
 	public DocumentReceivedHandlerDB() {
 	}
-
-	@Inject
-	public DocumentReceivedHandlerDB(ConnectionWrapper connWrapper) {
-		this.connWrapper = connWrapper;
-	}
+ 
 
 	public DocumentsReceived insert(DocumentsReceived input) throws SQLException {
 
@@ -87,7 +83,8 @@ public class DocumentReceivedHandlerDB {
 
 			}*/
 
-			return input;
+			
 		}
+		return input;
 	}
 }

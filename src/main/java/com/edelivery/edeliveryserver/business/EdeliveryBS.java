@@ -33,7 +33,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
 import com.edelivery.edeliveryserver.db.entityhandlers.BSDHandlerDB;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+ 
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentReceivedHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.entityhandlers.EvidenceHandlerDB;
@@ -75,7 +75,7 @@ public class EdeliveryBS {
 
 	private static final Logger LOG = Logger.getLogger(EdeliveryBS.class.getName());
 
-	ConnectionWrapper connWrapper;
+	 
 	DocumentSendHandlerDB docSendHd;
 	DocumentServerClient docClient;
 	EDeliveryServerConfiguration eDeliveryServerConfiguration;
@@ -95,7 +95,7 @@ public class EdeliveryBS {
 	}
 
 	@Inject
-	public EdeliveryBS(ConnectionWrapper conWrapper, DocumentSendHandlerDB docSendHd, DocumentServerClient docClient,
+	public EdeliveryBS(  DocumentSendHandlerDB docSendHd, DocumentServerClient docClient,
 			EDeliveryServerConfiguration eDeliveryServerConfiguration,BSDHandlerDB bsdHandler
 			,DocumentReceivedHandlerDB docReceivedHandler,EvidenceHandlerDB eviHandler
 			,MessageReceivedFromApHandlerDB messageReceivedHandler
@@ -103,7 +103,7 @@ public class EdeliveryBS {
 		this.eDeliveryServerConfiguration = eDeliveryServerConfiguration;
 		this.user=this.eDeliveryServerConfiguration.getConnectorUser();
 		this.password=this.eDeliveryServerConfiguration.getConnectorPassword();
-		this.connWrapper = conWrapper;
+		 
 		this.docSendHd = docSendHd;
 		this.docClient = docClient;
 		this.eviHandler = eviHandler;
@@ -436,32 +436,34 @@ public class EdeliveryBS {
 	
 	public static DocumentsReceived messageParams2DocReceiv(MessageParams params){
 		DocumentsReceived docReceived = new DocumentsReceived(); 
-		docReceived.setActualDocumentFilepath(params.getFilename());
-		docReceived.setAttachedDocumentsReceivedCollection(null);
-		docReceived.setDocId(null);
-		docReceived.setDocumentAcceptancePeriod(null);
-		docReceived.setDocumentAuthorityApplicant(null);
-		docReceived.setDocumentComments(params.getNormalizedDocComments());
-		docReceived.setDocumentDescription(null);
-		docReceived.setDocumentEtiquetteCreationDate(null);
-		docReceived.setDocumentIssuingAuthority(params.getOriginatorEmail());
-		docReceived.setDocumentIssuingOrganization(params.getOriginatorName());
-		docReceived.setDocumentLanguage(null);
-		docReceived.setDocumentOrganizationApplicant(null);
-		docReceived.setDocumentOrganizationEtiquette("-");
-		docReceived.setDocumentPurpose(null);
-		docReceived.setDocumentReceivedFromApDate(new Date()); //current 
-		docReceived.setDocumentReceiverAuthority(params.getDestinatorEmail());
-		docReceived.setDocumentReceiverOrganization(params.getDestinatorName());
-		docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()+""));//TODO
-		docReceived.setDocumentSubmitedToApDate(null);
-		docReceived.setDocumentTitle(params.getNormalizedDocSubject()==null?"-":params.getNormalizedDocSubject());
-		docReceived.setDocumentType("-");//TODO
-		docReceived.setDocumentValidPeriod(null);
-		docReceived.setMessageUniqueId(params.getMsgId());
-		//docReceived.setMessageId(params.getMsgId()); TODO 
-		//docReceived.setMessageUniqueId(params.getMsgId());
-		return docReceived;
+		if(params!=null){
+			docReceived.setActualDocumentFilepath(params.getFilename());
+			docReceived.setAttachedDocumentsReceivedCollection(null);
+			docReceived.setDocId(null);
+			docReceived.setDocumentAcceptancePeriod(null);
+			docReceived.setDocumentAuthorityApplicant(null);
+			docReceived.setDocumentComments(params.getNormalizedDocComments());
+			docReceived.setDocumentDescription(null);
+			docReceived.setDocumentEtiquetteCreationDate(null);
+			docReceived.setDocumentIssuingAuthority(params.getOriginatorEmail());
+			docReceived.setDocumentIssuingOrganization(params.getOriginatorName());
+			docReceived.setDocumentLanguage(null);
+			docReceived.setDocumentOrganizationApplicant(null);
+			docReceived.setDocumentOrganizationEtiquette("-");
+			docReceived.setDocumentPurpose(null);
+			docReceived.setDocumentReceivedFromApDate(new Date()); //current 
+			docReceived.setDocumentReceiverAuthority(params.getDestinatorEmail());
+			docReceived.setDocumentReceiverOrganization(params.getDestinatorName());
+			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED.getValue()+""));//TODO
+			docReceived.setDocumentSubmitedToApDate(null);
+			docReceived.setDocumentTitle(params.getNormalizedDocSubject()==null?"-":params.getNormalizedDocSubject());
+			docReceived.setDocumentType("-");//TODO
+			docReceived.setDocumentValidPeriod(null);
+			docReceived.setMessageUniqueId(params.getMsgId());
+			//docReceived.setMessageId(params.getMsgId()); TODO 
+			//docReceived.setMessageUniqueId(params.getMsgId());
+		}
+			return docReceived;
 	}
 	
 	public static Evidence eviParams2Evi(EvidenceParams params){

@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response.Status;
 
 import com.edelivery.edeliveryserver.business.EdeliveryBS;
 import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+ 
+
 
 @Singleton
 @Startup
@@ -28,8 +28,7 @@ public class ReceivePoller {
 	DataSource dataSource;
 	private Boolean poll;
 	
-	@Inject 
-	ConnectionWrapper connWrapper;
+	 
 
 	@Inject
 	EdeliverySettings settings;
@@ -37,8 +36,7 @@ public class ReceivePoller {
 	@Inject
 	EdeliveryBS edeliveryUtils;
 
-	@Inject
-	EdeliveryDatasource edatasource;
+	
 
 	
 	

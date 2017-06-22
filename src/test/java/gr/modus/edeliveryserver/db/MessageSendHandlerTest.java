@@ -5,11 +5,11 @@ import java.util.logging.Logger;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
-import com.edelivery.edeliveryserver.db.entityhandlers.ConnectionWrapper;
+
 import com.edelivery.edeliveryserver.db.entityhandlers.MessageSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
-import com.modus.edeliveryserver.db.factories.EdeliveryDatasource;
+
 
 
 public class MessageSendHandlerTest {
@@ -19,7 +19,7 @@ public class MessageSendHandlerTest {
 	MessageSendToAp messageSendToAp = new MessageSendToAp();
 	
 	MessageSendHandlerDB handler;
-	ConnectionWrapper connWrapper;
+	
 	
 	
 	@Before
@@ -36,10 +36,7 @@ public class MessageSendHandlerTest {
         ds.setValidationQuery("SELECT 1");
         ConstantsDB.setElds(ds);
         messageSendToAp.setMessageUniqueId("a5e3caf0-c0f3-441c-8a43-2df530c5b42e");
-        EdeliveryDatasource eds = new EdeliveryDatasource(); 
-        eds.setEdeliveryDatasource(ds);
-        connWrapper = new ConnectionWrapper(eds);
-        handler = new MessageSendHandlerDB(connWrapper);
+        handler = new MessageSendHandlerDB();
         
       
 		
