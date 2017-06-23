@@ -8,12 +8,13 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.edelivery.edeliveryserver.db.models.AttachedDocumentsSend;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.Tables;
-
+@ApplicationScoped
 public class AttachedDocumentsSendHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger( AttachedDocumentsSendHandlerDB.class.getName() );
 	 

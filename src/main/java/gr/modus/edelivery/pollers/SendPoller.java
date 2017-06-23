@@ -2,12 +2,13 @@ package gr.modus.edelivery.pollers;
 
 
 import java.sql.Connection;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -25,7 +26,7 @@ import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
 import com.edelivery.edeliveryserver.db.entityhandlers.DocumentSendHandlerDB;
 import com.edelivery.edeliveryserver.db.models.DocumentStatuses;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
-
+import javax.enterprise.concurrent.ManagedExecutorService;
 
 
 
@@ -41,11 +42,12 @@ public class SendPoller {
 	 */
 
 	private static final Logger LOG = Logger.getLogger(SendPoller.class.getName());
-	
+	@Resource
+    ManagedExecutorService managedExecutor;
 	private Boolean poll;
 	EdeliverySettings settings;
 	EdeliveryBS edeliveryUtils;
-	
+	private Future future;
 	DocumentSendHandlerDB   docSendHandler;
  
 	
@@ -86,6 +88,9 @@ public class SendPoller {
 	@PreDestroy
 	private void destroy() {
 		poll = false;
+		if(future!=null){
+    		future.cancel(true);
+    	}
 
 	}
 
@@ -94,8 +99,22 @@ public class SendPoller {
 
 	}
 
-
 	private void start() throws Exception {
+		LOG.info("start poller");
+    	future = managedExecutor.submit(() -> {
+            try {
+				_start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        });
+
+		 
+	}
+
+
+	private void _start() throws Exception {
 		
 
 		long loopall = 1;
@@ -123,7 +142,7 @@ public class SendPoller {
 		try {
 
 			
-			//conn = this.connWrapper.getConnection();
+	
 			
 			
 			if (this.edeliveryUtils == null) {
@@ -140,16 +159,11 @@ public class SendPoller {
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 		finally{
-			/*if(conn !=null ){
-				try{
-					conn.close();
-				}
-				catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}*/
+		
 		}
 
+		
+		LOG.log(Level.INFO, "testing");
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException ex) {

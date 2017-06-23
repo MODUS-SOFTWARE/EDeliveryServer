@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -14,7 +15,7 @@ import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
 import com.edelivery.edeliveryserver.db.models.Tables;
 
-@RequestScoped
+@ApplicationScoped
 public class MessageSendHandlerDB {
 	
 	private static final Logger LOGGER = Logger.getLogger( MessageSendHandlerDB.class.getName() );

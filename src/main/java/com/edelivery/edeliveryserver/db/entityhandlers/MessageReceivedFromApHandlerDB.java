@@ -10,18 +10,25 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
+import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
+import com.edelivery.edeliveryserver.configuration.EdeliverySettings;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
 import com.edelivery.edeliveryserver.db.models.Tables;
 
-@RequestScoped
+@ApplicationScoped
 public class MessageReceivedFromApHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(MessageReceivedFromApHandlerDB.class.getName());
 
+	@Inject 
+	EDeliveryServerConfiguration eDeliveryServerConfiguration;
+	
 	public MessageReceivedFromApHandlerDB(){
 		
 	}
@@ -75,12 +82,12 @@ public class MessageReceivedFromApHandlerDB {
 		try (PreparedStatement preparedStatement = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, input.getMessageUniqueApId());
 			preparedStatement.executeUpdate();
-			try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
+			/*try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
 				if (rs.next()) {
 					input.setId(rs.getInt(1));
 				}
 
-			}
+			}*/
 
 			return input;
 		}
@@ -90,6 +97,52 @@ public class MessageReceivedFromApHandlerDB {
 			}
 		}
 	}
+	
+	
+	/*INSERT INTO PFLDDOC (FOLDER_ID, FLDDOC_ID, FLDDOC_DESCRIPTION, FLDDOC_INSDATE, FLDDOC_USER_ID)
+   VALUES ((select folder_id from pfolders where folder_name like 'E Delivery (inbox)'), 1222, 'Description', GETDATE(), 100000)*/
+
+	
+	public void insertFolder(int docId , Connection conn) throws SQLException{
+		
+		String sqlOralce  = "INSERT INTO PFLDDOC (FOLDER_ID, FLDDOC_ID, FLDDOC_DESCRIPTION, FLDDOC_INSDATE, FLDDOC_USER_ID) " + 
+				"   VALUES ((select folder_id from pfolders where folder_name like 'E Delivery (inbox)'), ?, 'Description', SYSDATE, 100000)";
+		
+		
+		String sqlMSSQL = "INSERT INTO PFLDDOC (FOLDER_ID, FLDDOC_ID, FLDDOC_DESCRIPTION, FLDDOC_INSDATE, FLDDOC_USER_ID) " + 
+				"   VALUES ((select folder_id from pfolders where folder_name like 'E Delivery (inbox)'), ?, 'Description', GETDATE(), 100000)";
+		String sql = sqlOralce;
+		if(this.eDeliveryServerConfiguration.getDB().equalsIgnoreCase("SQL")){
+			sql = sqlMSSQL;
+		}
+		
+		LOGGER.log(Level.INFO,sql);
+		boolean closeConnection = false; 
+		if(conn==null){
+			conn = ConstantsDB.getElds().getConnection();
+			closeConnection=true;
+		}
+		try (PreparedStatement preparedStatement = conn.prepareStatement(sql );) {
+			preparedStatement.setInt(1, docId);
+			preparedStatement.executeUpdate();
+			/*try (ResultSet rs = preparedStatement.getGeneratedKeys();) {
+				if (rs.next()) {
+					input.setId(rs.getInt(1));
+				}
+
+			}*/
+
+			
+		}
+		finally{
+			if(conn !=null && closeConnection){
+				conn.close();
+			}
+		}
+	}
+
+	
+	
 	public MessageReceivedFromAp map(ResultSet resultSet) throws SQLException {
 		MessageReceivedFromAp messageReceivedFromAp = new MessageReceivedFromAp();
 		messageReceivedFromAp.setId(resultSet.getInt("id"));

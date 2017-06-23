@@ -18,7 +18,7 @@ import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 import com.edelivery.edeliveryserver.db.models.Tables;
 
 
-@RequestScoped
+@ApplicationScoped
 public class DocumentSendHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger( DocumentSendHandlerDB.class.getName() );
  
@@ -169,7 +169,8 @@ public class DocumentSendHandlerDB {
 		docSend.setDocumentReceiverAuthority(resultSet.getString("doc_receiver_authority"));
 		docSend.setDocumentReceiverOrganization(resultSet.getString("doc_receiver_organization"));
 		docSend.setActualDocumentFilepath(resultSet.getString("actual_document_filepath"));
-
+		docSend.setDocumentOrganizationEtiquette(resultSet.getString("doc_organization_etiquette"));
+		docSend.setDocumentComments(resultSet.getString("doc_comments"));
 		return docSend;
 	}
 

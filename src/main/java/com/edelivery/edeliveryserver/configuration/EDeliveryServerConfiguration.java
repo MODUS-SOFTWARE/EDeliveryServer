@@ -159,5 +159,9 @@ public class EDeliveryServerConfiguration {
     }
     
     
+    public String getDB(){
+    	return this.EDeliveryServerProperties.getString("DB");
+    }
+    
     
 }

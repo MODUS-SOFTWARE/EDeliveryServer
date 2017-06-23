@@ -8,13 +8,14 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 
 import com.edelivery.edeliveryserver.db.models.AttachedDocumentsSend;
 import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.Evidence;
 import com.edelivery.edeliveryserver.db.models.Tables;
-@RequestScoped
+@ApplicationScoped
 public class EvidenceHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger( EvidenceHandlerDB.class.getName() );
 	public EvidenceHandlerDB(){}

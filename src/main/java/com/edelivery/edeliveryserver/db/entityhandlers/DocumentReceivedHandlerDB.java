@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -15,7 +16,7 @@ import com.edelivery.edeliveryserver.db.models.ConstantsDB;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.Tables;
 
-@RequestScoped
+@ApplicationScoped
 public class DocumentReceivedHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(DocumentReceivedHandlerDB.class.getName());
 
@@ -64,8 +65,12 @@ public class DocumentReceivedHandlerDB {
 			long documentSubmitedToApDate = input.getDocumentSubmitedToApDate() == null ? 0
 					: input.getDocumentEtiquetteCreationDate().getTime();
 			preparedStatement.setDate(17, new java.sql.Date(documentSubmitedToApDate));
-			preparedStatement.setString(18, input.getDocumentTitle());
-			preparedStatement.setString(19, input.getDocumentType());
+			String title =input.getDocumentTitle();
+			if(title==null){title="Title";}
+			preparedStatement.setString(18, title);
+			String type =input.getDocumentType();
+			if(type==null){type="type";}
+			preparedStatement.setString(19, type);
 			long documentValidPeriod = input.getDocumentValidPeriod() == null ? 0
 					: input.getDocumentValidPeriod().getTime();
 			preparedStatement.setLong(20, documentValidPeriod);

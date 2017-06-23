@@ -1,5 +1,6 @@
 package gr.modus.edeliveryclient;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.Connection;
@@ -80,7 +81,8 @@ public class EdeliveryClientTest {
 		bsdHandler = new BSDHandlerDB(eDeliveryServerConfiguration);
 		
 		docSend = bs.selectNextById(DocumentStatuses.QUEUED, null);
-		
+		//docSend.setDocumentTitle("test title ");
+		//docSend.setDocumentComments("comments ");
 		//System.out.println(new Gson().toJson(docSend));
 
 		
@@ -120,6 +122,15 @@ public class EdeliveryClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -164,8 +175,12 @@ public class EdeliveryClientTest {
 
 	}
 
+	
+	@Test
 	public void testReceiveMessage() throws XPathExpressionException {
 		try (Connection conn = ConstantsDB.getElds().getConnection()) {
+			//9933_ydmed-20170622194206096@local_delivery
+			msg2Get.setMessageApUniqueId("9933_ydmed-20170622194206096@local_delivery"); //setMessageUniqueId("9933_ydmed-20170622194206096@local_delivery");
 			edelBS.receiveSBD(msg2Get, conn);
 			System.out.println("end");
 
@@ -201,7 +216,7 @@ public class EdeliveryClientTest {
 	}
 	
 	
-	@Test
+	
 	public void testReceiveNextMessage() throws XPathExpressionException {
 		try (Connection conn = ConstantsDB.getElds().getConnection()) {
 			edelBS.receiveNextMessage(conn);

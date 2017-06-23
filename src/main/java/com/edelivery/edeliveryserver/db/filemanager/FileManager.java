@@ -26,7 +26,6 @@ import javax.ejb.Stateless;
  *
  * @author Pantelispanka
  */
-@Stateless
 public class FileManager {
 
    

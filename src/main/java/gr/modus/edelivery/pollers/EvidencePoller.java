@@ -31,9 +31,6 @@ import com.edelivery.edeliveryserver.db.models.DocumentsSend;
 
 
 
-@Singleton
-@Startup
-@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 public class EvidencePoller {
 	/**
 	 *
@@ -76,7 +73,7 @@ public class EvidencePoller {
 			// InitialContext context = new InitialContext();
 
 			poll = false;
-			start();
+			//start();
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE, "Error happen. Evidence Poller probably is not running.  ", ex);
 			stop();

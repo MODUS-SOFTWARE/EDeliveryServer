@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
@@ -66,11 +67,12 @@ import com.modus.edeliveryserver.papyros.servers.DocumentServerClient;
 
 import JavaPapyrusR6ServerApi.DataTypes.DocumentApi;
 import gr.modus.edelivery.adapter.messages.MessageParams;
+import gr.modus.edelivery.adapter.messages.PDispatchMessage;
 import gr.modus.edelivery.papyros.servers.exceptions.DSException;
 import gr.modus.edelivery.papyros.servers.exceptions.InvalidInputException;
 
 
-@RequestScoped
+@ApplicationScoped
 public class EdeliveryBS {
 
 	private static final Logger LOG = Logger.getLogger(EdeliveryBS.class.getName());
@@ -169,13 +171,15 @@ public class EdeliveryBS {
 	 * @return
 	 * @throws DatatypeConfigurationException
 	 * @throws JAXBException
-	 * @throws MalformedURLException
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 * @throws SQLException 
+	 * @throws DSException 
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	public void sendSBD(DocumentsSend docSend,Connection conn)
-			throws MalformedURLException, JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, SQLException {
+			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, SQLException, FileNotFoundException, IOException, DSException {
 		
 		
 		boolean  closeConnection = false; 
@@ -193,13 +197,30 @@ public class EdeliveryBS {
 			params.setOriginatorEmail(eDeliveryServerConfiguration.getSenderEmail());
 			params.setDestinatorName(docSend.getDocumentReceiverOrganization());
 			params.setDestinatorEmail(docSend.getDocumentReceiverAuthority());
-			params.setFilename(docSend.getActualDocumentFilepath());
+			
+			String prot="";
+			if(docSend.getDocumentOrganizationEtiquette()!=null){
+				prot=docSend.getDocumentOrganizationEtiquette();
+			}
+			//params.setFilename(prot+" "+docSend.getDocumentTitle()+" "+docSend.getDocumentComments()+" ");
+			
+			//params.setFilename(docSend.getActualDocumentFilepath());
 			params.setMsgId(docSend.getMessageId() + "");
 			params.setMsgIdentification(docSend.getMessageUniqueId());
 			params.setNormalizedDocSubject(docSend.getDocumentType());
 			params.setNormalizedDocComments(docSend.getDocumentComments());
 			params.setSamSenderId(eDeliveryServerConfiguration.getSamSenderId());
-	
+			params.setComments(docSend.getDocumentComments());
+			params.setTitle(prot+" "+docSend.getDocumentTitle());
+			//String file = "";
+			//params.setFile(file);
+			String ext = docSend.getActualDocumentFilepath().substring(docSend.getActualDocumentFilepath().lastIndexOf(".") , docSend.getActualDocumentFilepath().length());
+			String filename = this.docClient.getDocument2File(docSend.getDocId(),ext);
+			params.setFilename(filename);
+			/*PDispatchMessage p = new PDispatchMessage(params);
+	        String payload = p.createREMDispatchType();
+	        LOG.log(Level.INFO, payload);*/
+			
 			CompletableFuture<ResponseMessage> responseC = deliveryClient.sendMessage(sbdParams, params, auth);
 			
 			
@@ -272,7 +293,10 @@ public class EdeliveryBS {
 		List<MessageReceivedFromAp> pending =  messageReceivedHandler.select(all);
 		if(pending!=null && pending.size()>0){
 			MessageReceivedFromAp msg = pending.get(0);
-			receiveSBD(msg,conn);
+			DocumentsReceived docRec = receiveSBD(msg,conn);
+			if(docRec!=null){
+				messageReceivedHandler.insertFolder(docRec.getDocId(), conn);
+			}
 		}
 	}
 	public List<MessageReceivedFromAp> receivePending(Connection conn) throws SQLException, InterruptedException, ExecutionException{
@@ -307,7 +331,7 @@ public class EdeliveryBS {
 		}
 		return all;
 	}
-	public void receiveSBD(MessageReceivedFromAp msg2Get, Connection conn)
+	public DocumentsReceived receiveSBD(MessageReceivedFromAp msg2Get, Connection conn)
 			throws JAXBException, DatatypeConfigurationException, InterruptedException, ExecutionException, XPathExpressionException, IOException, DSException, SQLException, InvalidInputException {
 		
 		boolean closeConnection = false;
@@ -325,7 +349,8 @@ public class EdeliveryBS {
 			DispatchExtractor dispExtractor = new DispatchExtractor(payLoad); 
 			params = dispExtractor.extractParams();
 			//insert file to papyros 
-			String filename = params.getFilename();
+			String ext = params.getFilename().substring(params.getFilename().lastIndexOf("."),params.getFilename().length());
+			String filename = params.getTitle() +" "+params.getComments()+ext;//params.getFilename();
 			String file = params.getFile();
 			if(file.equals("")){
 				throw new InvalidInputException("file is empty, message type is not valid");
@@ -346,16 +371,17 @@ public class EdeliveryBS {
 			docReceived.setMessageUniqueId(params.getMsgId()); //TODO check
 			docReceived.setMessageUniqueApId(msg2Get.getMessageApUniqueId());
 			docReceived.setDocumentStatus(new DocumentStatus(DocumentStatuses.COMPLETED .getValue()+""));
+			docReceived.setDocumentTitle(params.getTitle());
+			docReceived.setDocumentComments(params.getComments());
 			docReceivedHandler.insert(docReceived);
 			this.messageReceivedHandler.insert( docReceived , conn);
 			/*File f = new File("c:/tmp/"+filename);
 			try(FileOutputStream fout=new FileOutputStream(f);InputStream in = new ByteArrayInputStream(valueDecoded);){
 				IOUtils.copy(in, fout);
 			}*/
-			
-			
 			LOG.log(Level.INFO, "params:"+new Gson().toJson(params));
 			LOG.log(Level.INFO, "receiveSBD");
+			return docReceived;
 		}
 		catch(Exception ex){
 			DocumentsReceived docReceived;
@@ -366,6 +392,7 @@ public class EdeliveryBS {
 			docReceived.setMessageUniqueApId(msg2Get.getMessageApUniqueId());; //TODO check
 			docReceivedHandler.insert(docReceived);
 			this.messageReceivedHandler.insert( docReceived , conn);
+			return docReceived;
 		}
 		finally{
 			if(conn!=null&& closeConnection){

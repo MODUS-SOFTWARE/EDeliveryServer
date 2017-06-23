@@ -1,14 +1,17 @@
 package gr.modus.edelivery.pollers;
 
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.ws.rs.core.Response;
@@ -28,8 +31,10 @@ public class ReceivePoller {
 	DataSource dataSource;
 	private Boolean poll;
 	
-	 
-
+	private Future future;
+	@Resource
+    ManagedExecutorService managedExecutor;
+	
 	@Inject
 	EdeliverySettings settings;
 
@@ -74,7 +79,20 @@ public class ReceivePoller {
 
 	}
 
-	private void start() throws Exception {
+	
+	public void start(){
+    	LOG.info("start poller");
+    	future = managedExecutor.submit(() -> {
+            try {
+				_start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        });
+    }
+	
+	private void _start() throws Exception {
 		LOG.log(Level.INFO, "Indexing poller started.");
 
 		long loopall = 1;

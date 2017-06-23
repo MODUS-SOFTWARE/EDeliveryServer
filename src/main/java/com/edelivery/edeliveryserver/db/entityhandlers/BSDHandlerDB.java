@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -12,7 +13,7 @@ import com.edelivery.edeliveryserver.db.models.BSDMessage;
 import com.edelivery.edeliveryserver.db.models.Participants;
 import com.edelivery.edeliveryserver.db.models.Scope;
 
-@RequestScoped
+@ApplicationScoped
 public class BSDHandlerDB {
 	private static final Logger LOGGER = Logger.getLogger(DocumentSendHandlerDB.class.getName());
 	 
