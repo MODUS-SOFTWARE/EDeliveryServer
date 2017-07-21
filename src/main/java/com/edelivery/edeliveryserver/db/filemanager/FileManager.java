@@ -18,9 +18,16 @@
 package com.edelivery.edeliveryserver.db.filemanager;
 
 import com.edelivery.edeliveryserver.configuration.EDeliveryServerConfiguration;
+import com.edelivery.edeliveryserver.handlers.EDeliveryHandler;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 
 /**
  *
@@ -29,7 +36,7 @@ import javax.ejb.Stateless;
 @Stateless
 public class FileManager {
 
-    @EJB
+    @Inject
     EDeliveryServerConfiguration edelConf;
     
     
@@ -43,6 +50,17 @@ public class FileManager {
     
     public void saveFile(String fileId) {
     
+        FileOutputStream fop = null;
+        
+        File file = new File(workingPath + fileId);
+        
+        
+        try{
+            file.createNewFile();
+            fop = new FileOutputStream(file);
+        }catch( IOException e ){
+            throw new InternalServerErrorException("File path could not be created", e);
+        }
         
         
         

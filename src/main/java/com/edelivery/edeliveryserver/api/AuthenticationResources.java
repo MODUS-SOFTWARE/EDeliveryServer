@@ -17,12 +17,20 @@
  */
 package com.edelivery.edeliveryserver.api;
 
+import com.modus.edeliveryclient.EDeliveryClientFactory;
+import com.modus.edeliveryclient.EDeliveryClientImplementation;
+import com.modus.edeliveryclient.jaxb.standardbusinessdocument.StandardBusinessDocumentHeader;
+import com.modus.edeliveryclient.models.Authorization;
+import com.modus.edeliveryclient.models.Messages;
+import com.modus.edeliveryclient.models.ResponseMessage;
 import io.swagger.annotations.Api;
+import java.util.concurrent.CompletableFuture;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 /**
  *
@@ -39,6 +47,9 @@ public class AuthenticationResources {
     @Consumes("application/json")
     @Produces("application/json")
     public Response getApiKey() {
+        
+        
+        
         return Response.ok().build();
     }
 

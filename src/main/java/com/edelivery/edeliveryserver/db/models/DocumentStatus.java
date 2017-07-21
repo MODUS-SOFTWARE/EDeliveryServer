@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "document_status", catalog = "edeliveryserver", schema = "edeliveryserver")
+@Table(name = "ED_DOC_STATUS")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DocumentStatus.findAll", query = "SELECT d FROM DocumentStatus d")
@@ -37,12 +37,12 @@ public class DocumentStatus implements Serializable {
     @Basic(optional = false)
     @NotNull
     private Integer id;
-    @Size(max = 20)
+    @Size(max = 40)
     private String status;
-    @OneToMany(mappedBy = "documentStatus")
-    private Collection<DocumentsReceived> documentsReceivedCollection;
-    @OneToMany(mappedBy = "documentStatus")
-    private Collection<DocumentsSend> documentsSendCollection;
+//    @OneToMany(mappedBy = "documentStatus")
+//    private Collection<DocumentsReceived> documentsReceivedCollection;
+//    @OneToMany(mappedBy = "documentStatus")
+//    private Collection<DocumentsSend> documentsSendCollection;
 
     public DocumentStatus() {
     }
@@ -67,23 +67,23 @@ public class DocumentStatus implements Serializable {
         this.status = status;
     }
 
-    @XmlTransient
-    public Collection<DocumentsReceived> getDocumentsReceivedCollection() {
-        return documentsReceivedCollection;
-    }
-
-    public void setDocumentsReceivedCollection(Collection<DocumentsReceived> documentsReceivedCollection) {
-        this.documentsReceivedCollection = documentsReceivedCollection;
-    }
-
-    @XmlTransient
-    public Collection<DocumentsSend> getDocumentsSendCollection() {
-        return documentsSendCollection;
-    }
-
-    public void setDocumentsSendCollection(Collection<DocumentsSend> documentsSendCollection) {
-        this.documentsSendCollection = documentsSendCollection;
-    }
+//    @XmlTransient
+//    public Collection<DocumentsReceived> getDocumentsReceivedCollection() {
+//        return documentsReceivedCollection;
+//    }
+//
+//    public void setDocumentsReceivedCollection(Collection<DocumentsReceived> documentsReceivedCollection) {
+//        this.documentsReceivedCollection = documentsReceivedCollection;
+//    }
+//
+//    @XmlTransient
+//    public Collection<DocumentsSend> getDocumentsSendCollection() {
+//        return documentsSendCollection;
+//    }
+//
+//    public void setDocumentsSendCollection(Collection<DocumentsSend> documentsSendCollection) {
+//        this.documentsSendCollection = documentsSendCollection;
+//    }
 
     @Override
     public int hashCode() {

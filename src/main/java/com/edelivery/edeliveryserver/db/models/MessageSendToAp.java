@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "message_send_to_ap", catalog = "edeliveryserver", schema = "edeliveryserver")
+@Table(name = "ED_message_send_to_ap")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MessageSendToAp.findAll", query = "SELECT m FROM MessageSendToAp m")
@@ -42,11 +42,7 @@ public class MessageSendToAp implements Serializable {
     @Size(min = 1, max = 80)
     @Column(name = "message_unique_id")
     private String messageUniqueId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
-    private DocumentsReceived documentsReceived;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
-    private DocumentsSend documentsSend;
-
+    
     public MessageSendToAp() {
     }
 
@@ -75,21 +71,21 @@ public class MessageSendToAp implements Serializable {
         this.messageUniqueId = messageUniqueId;
     }
 
-    public DocumentsReceived getDocumentsReceived() {
-        return documentsReceived;
-    }
-
-    public void setDocumentsReceived(DocumentsReceived documentsReceived) {
-        this.documentsReceived = documentsReceived;
-    }
-
-    public DocumentsSend getDocumentsSend() {
-        return documentsSend;
-    }
-
-    public void setDocumentsSend(DocumentsSend documentsSend) {
-        this.documentsSend = documentsSend;
-    }
+//    public DocumentsReceived getDocumentsReceived() {
+//        return documentsReceived;
+//    }
+//
+//    public void setDocumentsReceived(DocumentsReceived documentsReceived) {
+//        this.documentsReceived = documentsReceived;
+//    }
+//
+//    public DocumentsSend getDocumentsSend() {
+//        return documentsSend;
+//    }
+//
+//    public void setDocumentsSend(DocumentsSend documentsSend) {
+//        this.documentsSend = documentsSend;
+//    }
 
     @Override
     public int hashCode() {

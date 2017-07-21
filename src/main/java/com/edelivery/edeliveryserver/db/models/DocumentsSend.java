@@ -140,6 +140,8 @@ public class DocumentsSend implements Serializable {
     @Size(max = 100)
     @Column(name = "document_organization_applicant")
     private String documentOrganizationApplicant;
+    @Column(name = "docId")
+    private Integer docId;
     @OneToMany(mappedBy = "referenceDocument")
     private Collection<AttachedDocumentsSend> attachedDocumentsSendCollection;
     @JoinColumn(name = "document_status", referencedColumnName = "id")
@@ -349,6 +351,14 @@ public class DocumentsSend implements Serializable {
         this.documentOrganizationApplicant = documentOrganizationApplicant;
     }
 
+    public Integer getDocId() {
+        return docId;
+    }
+
+    public void setDocId(Integer docId) {
+        this.docId = docId;
+    }
+    
     @XmlTransient
     public Collection<AttachedDocumentsSend> getAttachedDocumentsSendCollection() {
         return attachedDocumentsSendCollection;

@@ -18,16 +18,24 @@
 package com.edelivery.edeliveryserver.db.entityhandlers;
 
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 
 /**
  *
  * @author Pantelispanka
  */
-public class MessageReceivedFromApHandler extends AbstractDbHandler<MessageReceivedFromAp>{
-    
+@Stateless
+@Transactional
+public class MessagesReceivedFromApHandler extends AbstractDbHandler<MessageReceivedFromAp> {
+
     @PersistenceContext
     EntityManager em;
 
@@ -35,20 +43,43 @@ public class MessageReceivedFromApHandler extends AbstractDbHandler<MessageRecei
     protected EntityManager getEntityManager() {
         return em;
     }
-    
-    public MessageReceivedFromApHandler(){
+
+    public MessagesReceivedFromApHandler() {
         super(MessageReceivedFromAp.class);
     }
-    
-    public MessageReceivedFromAp getMessageUniqueId(String id){
+
+    public MessageReceivedFromAp getMessageUniqueId(String id) {
         MessageReceivedFromAp mrfp = new MessageReceivedFromAp();
-        try{
+        try {
             mrfp = (MessageReceivedFromAp) em.createNamedQuery("MessageReceivedFromAp.findByMessageUniqueId")
+                    .setParameter("messageUniqueId", id)
                     .getSingleResult();
-        }catch(Exception e){
-            throw new BadRequestException("Message id not found", e);
+        } catch (NoResultException e) {
+
+            throw new BadRequestException("No message id found", e);
         }
         return mrfp;
     }
-    
+
+    public List<MessageReceivedFromAp> getMessageIdFirtsResult(String id){
+        List<MessageReceivedFromAp> res = new ArrayList();
+        try{
+            res = (List<MessageReceivedFromAp>) em.createNamedQuery("MessageReceivedFromAp.findByMessageUniqueId")
+                    .setParameter("messageUniqueId", id).getResultList();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return res;
+        
+    }
+
+    public void createMessageUniqueId(MessageReceivedFromAp mrfp) {
+        try {
+            em.persist(mrfp);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Message id could not be stored", e);
+        }
+
+    }
+
 }

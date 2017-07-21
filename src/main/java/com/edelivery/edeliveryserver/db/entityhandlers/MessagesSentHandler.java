@@ -28,7 +28,7 @@ import javax.ws.rs.BadRequestException;
  * @author Pantelispanka
  */
 @Stateless
-public class MessageSentHandler extends AbstractDbHandler<MessageSendToAp> {
+public class MessagesSentHandler extends AbstractDbHandler<MessageSendToAp> {
     
     
     @PersistenceContext
@@ -39,7 +39,7 @@ public class MessageSentHandler extends AbstractDbHandler<MessageSendToAp> {
         return em;
     }
     
-    public MessageSentHandler(){
+    public MessagesSentHandler(){
         super(MessageSendToAp.class);
     }
     
