@@ -46,6 +46,9 @@ public class WorkerThreads {
     @EJB
     RemDispIncRun incTask;
     
+    @EJB
+    RemDispOutRun outTask;
+    
 //    private ManagedExecutorService executor;
     private int poolSize = 1;
     private int batchSize = poolSize * 1;
@@ -53,34 +56,47 @@ public class WorkerThreads {
 
     private Future future;
 
-    private ScheduledExecutorService executor;
+    private ScheduledExecutorService executor1;
 
+    private ScheduledExecutorService executor2;
+    
     public WorkerThreads() {
     }
 
     public void Start() {
 
-        System.out.println("Starting poller");
+        System.out.println("Starting pollers");
                 
-        executor = Executors.newScheduledThreadPool(poolSize);
+        executor1 = Executors.newScheduledThreadPool(poolSize);
 
+        executor2 = Executors.newScheduledThreadPool(poolSize);
+        
+        
         RemDispIncRun.findIncoming findIncTask = incTask.new findIncoming();
 
-        Runnable task = findIncTask;
-
+        RemDispOutRun.sendOutgoing sendOutgoingTask = outTask.new sendOutgoing();
+        
+        Runnable task1 = findIncTask;
+        Runnable task2 = sendOutgoingTask;
+        
+        
         int initialDelay = 0;
         int period = 10;
-        executor.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
-
+        executor1.scheduleAtFixedRate(task1, initialDelay, period, TimeUnit.SECONDS);
+        executor2.scheduleAtFixedRate(task2, initialDelay, period, TimeUnit.SECONDS);
+        
     }
 
     @PreDestroy
     public void shutdown() {
 
         try {
-            executor.shutdown();
-            executor.awaitTermination(15, TimeUnit.SECONDS);
-            executor = null;
+            executor1.shutdown();
+            executor1.awaitTermination(15, TimeUnit.SECONDS);
+            executor1 = null;
+            executor2.shutdown();
+            executor2.awaitTermination(15, TimeUnit.SECONDS);
+            executor2 = null;
         } catch (InterruptedException e) {
             throw new InternalServerErrorException("Poller Problem", e);
         }

@@ -17,7 +17,7 @@
  */
 package com.edelivery.edeliveryserver.db.entityhandlers;
 
-import com.edelivery.edeliveryserver.db.models.DocumentStatus;
+import com.edelivery.edeliveryserver.db.models.MessagesSendToAp;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,9 +27,9 @@ import javax.ws.rs.BadRequestException;
  *
  * @author Pantelispanka
  */
-
 @Stateless
-public class DocumentStatusHandler extends AbstractDbHandler<DocumentStatus>{
+public class MessagesSentToApHandler extends AbstractDbHandler<MessagesSendToAp> {
+    
     
     @PersistenceContext
     EntityManager em;
@@ -39,19 +39,20 @@ public class DocumentStatusHandler extends AbstractDbHandler<DocumentStatus>{
         return em;
     }
     
-    public DocumentStatusHandler(){
-        super(DocumentStatus.class);
+    public MessagesSentToApHandler(){
+        super(MessagesSendToAp.class);
     }
     
-    public DocumentStatus findByStatus(String status){
-        DocumentStatus ds = new DocumentStatus();
+    public MessagesSendToAp findByUniqueId(String uniqueId){
+        MessagesSendToAp msta = new MessagesSendToAp();
         try{
-            ds = (DocumentStatus) em.createNamedQuery("DocumentStatus.findByStatus")
-                    .setParameter("status", status).getSingleResult();
+            msta = (MessagesSendToAp) em.createNamedQuery("MessageSentToAp.findByMessageUniqueId")
+                    .setParameter("messageUniqueId", uniqueId).getSingleResult();
         }catch(Exception e){
-            throw new BadRequestException("Status not found", e);
+            throw new BadRequestException("Message not found", e);
         }
-        return ds;
+        return msta;
     }
+    
     
 }

@@ -44,7 +44,7 @@ public class PostalAddress implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Size(min = 1, max = 255)
     @Column(name = "country_name")
@@ -70,11 +70,11 @@ public class PostalAddress implements Serializable {
     @Column(name = "street_address")
     private String streetAddress;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

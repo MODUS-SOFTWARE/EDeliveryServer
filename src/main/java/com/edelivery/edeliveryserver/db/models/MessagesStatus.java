@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,30 +26,31 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "ED_DOC_STATUS")
+@Table(name = "ED_MES_STATUS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DocumentStatus.findAll", query = "SELECT d FROM DocumentStatus d")
-    , @NamedQuery(name = "DocumentStatus.findById", query = "SELECT d FROM DocumentStatus d WHERE d.id = :id")
-    , @NamedQuery(name = "DocumentStatus.findByStatus", query = "SELECT d FROM DocumentStatus d WHERE d.status = :status")})
-public class DocumentStatus implements Serializable {
+    @NamedQuery(name = "MessagesStatus.findAll", query = "SELECT d FROM MessagesStatus d")
+    , @NamedQuery(name = "MessagesStatus.findById", query = "SELECT d FROM MessagesStatus d WHERE d.id = :id")
+    , @NamedQuery(name = "MessagesStatus.findByStatus", query = "SELECT d FROM MessagesStatus d WHERE d.status = :status")})
+public class MessagesStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private Integer id;
-    @Size(max = 40)
+    @Size(max = 20)
     private String status;
 //    @OneToMany(mappedBy = "documentStatus")
 //    private Collection<DocumentsReceived> documentsReceivedCollection;
 //    @OneToMany(mappedBy = "documentStatus")
 //    private Collection<DocumentsSend> documentsSendCollection;
 
-    public DocumentStatus() {
+    public MessagesStatus() {
     }
 
-    public DocumentStatus(Integer id) {
+    public MessagesStatus(Integer id) {
         this.id = id;
     }
 
@@ -95,10 +98,10 @@ public class DocumentStatus implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DocumentStatus)) {
+        if (!(object instanceof MessagesStatus)) {
             return false;
         }
-        DocumentStatus other = (DocumentStatus) object;
+        MessagesStatus other = (MessagesStatus) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

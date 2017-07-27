@@ -69,19 +69,39 @@ public class DocumentServerClient {
         eDeliveryServerConfiguration = eDeliveryServerConfigurationp;
     }
 
-    public String getDocument2File(Integer docId, String extension) throws IOException, FileNotFoundException, DocumentServerException {
+    public String getDocument2File(Integer docId, String extension, DocumentApi docApi) throws IOException, FileNotFoundException, DocumentServerException {
         Integer page = 0;
         Integer userId = this.eDeliveryServerConfiguration.getEDeliveryUser();
         Integer docTypeId = Constants.DEFAULT_DOCUMENT_DISPLAY_TYPE_NORMAL;
-        return getDocument2File(docId, page, userId, docTypeId, extension);
+        return getDocument2File(docId, page, userId, docTypeId, extension, docApi);
     }
+    
+    public String getDocumentFile(Integer docId, DocumentApi docApi) throws DocumentServerException{
+    
+        WMTErrRetType errorLoc;
+//        DocumentApi docApi = new DocumentApi();
+        
+        Integer page = 0;
+        Integer userId = this.eDeliveryServerConfiguration.getEDeliveryUser();
+        Integer docTypeId = Constants.DEFAULT_DOCUMENT_DISPLAY_TYPE_NORMAL;
+        String fileName;
+        try{
+            fileName = getDocument2File(docId, page, userId, docTypeId, null, docApi);
+        }catch(IOException | DocumentServerException e){
+            throw new DocumentServerException(e.getLocalizedMessage());
+        }
+        
+        
+        return fileName;
+        
+    }
+    
 
-    public String getDocument2File(Integer docId, Integer page, Integer userId, Integer docTypeId, String extension) throws IOException, FileNotFoundException, DocumentServerException {
+    public String getDocument2File(Integer docId, Integer page, Integer userId, Integer docTypeId, String extension, DocumentApi docApi) throws IOException, FileNotFoundException, DocumentServerException {
         List resultTemp;
 
         int numberOfPagep = page;
         int docTypeIdp = docTypeId;
-        DocumentApi docApi;
         WMTErrRetType errorLoc;
 
         String tempFolder = eDeliveryServerConfiguration.getEDeliveryServerProperties().getString("tempFolder");// edeliverySettings.getTempFolder();
@@ -101,7 +121,6 @@ public class DocumentServerClient {
             buffStream = new BufferedOutputStream(new FileOutputStream(fout));
             errorLoc = getDocumentR7Call(userId, docId, numberOfPagep, docTypeIdp, buffStream);//getDocumentCall(filename, docId, docTypeId, userId)
             throwDSError(errorLoc, "getDocument,GetDocumentR7");
-            docApi = new DocumentApi();
             resultTemp = errorLoc.getData();
             docApi.setFilename(resultTemp.get(0).toString());
             docApi.setExtension(resultTemp.get(1).toString());

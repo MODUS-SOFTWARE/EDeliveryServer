@@ -17,20 +17,22 @@
  */
 package com.edelivery.edeliveryserver.db.entityhandlers;
 
-import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
+import com.edelivery.edeliveryserver.db.constants.MessageStatus;
+import com.edelivery.edeliveryserver.db.models.MessagesSent;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 
 /**
  *
- * @author Pantelispanka
+ * @author modussa
  */
 @Stateless
-public class MessagesSentHandler extends AbstractDbHandler<MessageSendToAp> {
-    
-    
+public class MessagesSentHandler extends AbstractDbHandler<MessagesSent> {
+
     @PersistenceContext
     EntityManager em;
 
@@ -38,21 +40,39 @@ public class MessagesSentHandler extends AbstractDbHandler<MessageSendToAp> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
-    public MessagesSentHandler(){
-        super(MessageSendToAp.class);
+
+    public MessagesSentHandler() {
+        super(MessagesSent.class);
     }
-    
-    public MessageSendToAp findByUniqueId(String uniqueId){
-        MessageSendToAp msta = new MessageSendToAp();
-        try{
-            msta = (MessageSendToAp) em.createNamedQuery("MessageSentToAp.findByMessageUniqueId")
-                    .setParameter("messageUniqueId", uniqueId).getSingleResult();
-        }catch(Exception e){
-            throw new BadRequestException("Message not found", e);
+
+    public List<MessagesSent> getPendingMessages() {
+        List<MessagesSent> messagesPending = em.createNamedQuery("MessagesSent.findByDocStatus")
+                .setParameter("status", MessageStatus.PENDING.toString()).getResultList();
+        return messagesPending;
+    }
+
+    public MessagesSent getMessageByUniqueId(String uniqueId) {
+
+        MessagesSent ms = new MessagesSent();
+        try {
+            ms = (MessagesSent) em.createNamedQuery("MessagesSent.findByMessageUnId")
+                    .setParameter("messageUnId", uniqueId).getSingleResult();
+        } catch (NoResultException e) {
+            throw new InternalServerErrorException("Could not find messages sent with unique id provided", e);
         }
-        return msta;
+        return ms;
+
     }
-    
-    
+
+    public void updateMessage(MessagesSent message) {
+        try {
+//            em.getTransaction();
+            em.merge(message);
+//            em.close();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not update Entity", e);
+        }
+
+    }
+
 }

@@ -27,7 +27,7 @@ import com.edelivery.edeliveryserver.db.entityhandlers.PostalAddressHandler;
 import com.edelivery.edeliveryserver.db.models.DocumentsReceived;
 import com.edelivery.edeliveryserver.db.models.EvidenceReceived;
 import com.edelivery.edeliveryserver.db.models.MessageReceivedFromAp;
-import com.edelivery.edeliveryserver.db.models.MessageSendToAp;
+import com.edelivery.edeliveryserver.db.models.MessagesSendToAp;
 import com.edelivery.edeliveryserver.db.models.PostalAddress;
 //import com.edelivery.edeliveryserver.documentserver.DocumentServer;
 import com.edelivery.edeliveryserver.documentserver.DocumentServerClient;
@@ -149,7 +149,7 @@ public class RemDispIncRun {
         try {
             mes = m.get();
         } catch (InternalServerErrorException | InterruptedException | ExecutionException e) {
-            LOG.log(Level.INFO, "EDeliveryServerUp. No messagesPending, or other client problem {0}", e.getMessage());
+            LOG.log(Level.INFO, "EDeliveryServerUp. No messagesPending, or other client problem {0}", e.getMessage() + e.getStackTrace());
             return null;
         }
         try {
@@ -267,15 +267,25 @@ public class RemDispIncRun {
 
         docRec.setMessageUniqueId(remDisp.getId());
         docRec.setDocumentComments(remDisp.getNormalizedMsg().getInformational().getComments());
-        docRec.setDocumentAcceptancePeriod(remDisp.getMsgMetaData().getDeliveryConstraints().getObsoleteAfter().toGregorianCalendar().getTime());
+        
+        try{
+            docRec.setDocumentAcceptancePeriod(remDisp.getMsgMetaData().getDeliveryConstraints().getObsoleteAfter().toGregorianCalendar().getTime());
+        }catch(NullPointerException e){
+            ;
+        }
+            
         docRec.setDocumentPurpose(remDisp.getNormalizedMsg().getInformational().getSubject());
         docRec.setMessageId(remDisp.getMsgMetaData().getMsgIdentification().getMessageID());
 
         docRec.setDocumentType(remDisp.getOriginalMsg().getContentType());
 
         List<KeywordType> keys = remDisp.getNormalizedMsg().getInformational().getKeywords();
-        for (KeywordType key : keys) {
-            docRec.setDocumentTitle(key.getValue());
+        if (keys.isEmpty()) {
+            ;
+        }else{
+            keys.forEach((key) -> {
+                docRec.setDocumentTitle(key.getValue());
+            });
         }
 
         docRec.setDocumentTitle(remDisp.getMsgMetaData().getMsgIdentification().getMessageID());
