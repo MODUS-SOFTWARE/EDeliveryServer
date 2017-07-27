@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "documents_received", catalog = "edeliveryserver", schema = "edeliveryserver")
+@Table(name = "ED_ACTUAL_MES")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DocumentsReceived.findAll", query = "SELECT d FROM DocumentsReceived d")
@@ -48,10 +50,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "DocumentsReceived.findByDocumentReceivedFromApDate", query = "SELECT d FROM DocumentsReceived d WHERE d.documentReceivedFromApDate = :documentReceivedFromApDate")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentComments", query = "SELECT d FROM DocumentsReceived d WHERE d.documentComments = :documentComments")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentLanguage", query = "SELECT d FROM DocumentsReceived d WHERE d.documentLanguage = :documentLanguage")
-    , @NamedQuery(name = "DocumentsReceived.findByReferencedDocumentUniqueId", query = "SELECT d FROM DocumentsReceived d WHERE d.referencedDocumentUniqueId = :referencedDocumentUniqueId")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentValidPeriod", query = "SELECT d FROM DocumentsReceived d WHERE d.documentValidPeriod = :documentValidPeriod")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentAcceptancePeriod", query = "SELECT d FROM DocumentsReceived d WHERE d.documentAcceptancePeriod = :documentAcceptancePeriod")
-    , @NamedQuery(name = "DocumentsReceived.findByActualDocumentFilepath", query = "SELECT d FROM DocumentsReceived d WHERE d.actualDocumentFilepath = :actualDocumentFilepath")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentIssuingAuthority", query = "SELECT d FROM DocumentsReceived d WHERE d.documentIssuingAuthority = :documentIssuingAuthority")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentIssuingOrganization", query = "SELECT d FROM DocumentsReceived d WHERE d.documentIssuingOrganization = :documentIssuingOrganization")
     , @NamedQuery(name = "DocumentsReceived.findByDocumentReceiverAuthority", query = "SELECT d FROM DocumentsReceived d WHERE d.documentReceiverAuthority = :documentReceiverAuthority")
@@ -62,92 +62,88 @@ public class DocumentsReceived implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "message_id")
-    private int messageId;
+    @Column(name = "mes_id")
+    private String messageId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 80)
-    @Column(name = "message_unique_id")
+    @Column(name = "mes_unique_id")
     private String messageUniqueId;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
     @Size(min = 1, max = 50)
-    @Column(name = "document_organization_etiquette")
+    @Column(name = "doc_organization_etiquette")
     private String documentOrganizationEtiquette;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
     @Size(min = 1, max = 20)
-    @Column(name = "document_type")
+    @Column(name = "doc_type")
     private String documentType;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
     @Size(min = 1, max = 400)
-    @Column(name = "document_title")
+    @Column(name = "doc_title")
     private String documentTitle;
     @Size(max = 100)
-    @Column(name = "document_purpose")
+    @Column(name = "doc_purpose")
     private String documentPurpose;
     @Size(max = 400)
-    @Column(name = "document_description")
+    @Column(name = "doc_description")
     private String documentDescription;
-    @Column(name = "document_etiquette_creation_date")
+    @Column(name = "doc_etiquette_creation_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentEtiquetteCreationDate;
-    @Column(name = "document_submited_to_ap_date")
+    @Column(name = "doc_submited_to_ap_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentSubmitedToApDate;
-    @Column(name = "document_received_from_ap_date")
+    @Column(name = "doc_received_from_ap_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentReceivedFromApDate;
     @Size(max = 400)
-    @Column(name = "document_comments")
+    @Column(name = "doc_comments")
     private String documentComments;
     @Size(max = 10)
-    @Column(name = "document_language")
+    @Column(name = "doc_language")
     private String documentLanguage;
-    @Size(max = 80)
-    @Column(name = "referenced_document_unique_id")
-    private String referencedDocumentUniqueId;
-    @Column(name = "document_valid_period")
+    @Column(name = "doc_valid_period")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentValidPeriod;
-    @Column(name = "document_acceptance_period")
+    @Column(name = "doc_acceptance_period")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentAcceptancePeriod;
-    @Size(max = 200)
-    @Column(name = "actual_document_filepath")
-    private String actualDocumentFilepath;
     @Size(max = 100)
-    @Column(name = "document_issuing_authority")
+    @Column(name = "doc_issuing_authority")
     private String documentIssuingAuthority;
     @Size(max = 100)
-    @Column(name = "document_issuing_organization")
+    @Column(name = "doc_issuing_organization")
     private String documentIssuingOrganization;
     @Size(max = 100)
-    @Column(name = "document_receiver_authority")
+    @Column(name = "doc_receiver_authority")
     private String documentReceiverAuthority;
     @Size(max = 100)
-    @Column(name = "document_receiver_organization")
+    @Column(name = "doc_receiver_organization")
     private String documentReceiverOrganization;
     @Size(max = 100)
-    @Column(name = "document_authority_applicant")
+    @Column(name = "doc_authority_applicant")
     private String documentAuthorityApplicant;
     @Size(max = 100)
-    @Column(name = "document_organization_applicant")
+    @Column(name = "doc_organization_applicant")
     private String documentOrganizationApplicant;
-    @JoinColumn(name = "document_status", referencedColumnName = "id")
-    @ManyToOne
-    private DocumentStatus documentStatus;
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private MessageSendToAp messageSendToAp;
-    @OneToMany(mappedBy = "referenceDocument")
-    private Collection<AttachedDocumentsReceived> attachedDocumentsReceivedCollection;
+    @Column(name = "docId")
+    @NotNull
+    private Integer docId;
+    @Column(name = "mes_ap_unique_id")
+    @Size(max = 255)
+    private String uniqueIdFromAp;
+//    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+//    @OneToOne
+//    private MessageSendToAp messageSendToAp;
+//    @OneToMany(mappedBy = "referenceDocument")
+//    
+//    private Collection<AttachedDocumentsReceived> attachedDocumentsReceivedCollection;
 
     public DocumentsReceived() {
     }
@@ -156,7 +152,7 @@ public class DocumentsReceived implements Serializable {
         this.id = id;
     }
 
-    public DocumentsReceived(Integer id, int messageId, String messageUniqueId, String documentOrganizationEtiquette, String documentType, String documentTitle) {
+    public DocumentsReceived(Integer id, String messageId, String messageUniqueId, String documentOrganizationEtiquette, String documentType, String documentTitle) {
         this.id = id;
         this.messageId = messageId;
         this.messageUniqueId = messageUniqueId;
@@ -173,11 +169,11 @@ public class DocumentsReceived implements Serializable {
         this.id = id;
     }
 
-    public int getMessageId() {
+    public String getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
 
@@ -269,14 +265,21 @@ public class DocumentsReceived implements Serializable {
         this.documentLanguage = documentLanguage;
     }
 
-    public String getReferencedDocumentUniqueId() {
-        return referencedDocumentUniqueId;
+    public String getUniqueIdFromAp() {
+        return uniqueIdFromAp;
     }
 
-    public void setReferencedDocumentUniqueId(String referencedDocumentUniqueId) {
-        this.referencedDocumentUniqueId = referencedDocumentUniqueId;
+    public void setUniqueIdFromAp(String uniqueIdFromAp) {
+        this.uniqueIdFromAp = uniqueIdFromAp;
     }
 
+//    public String getReferencedDocumentUniqueId() {
+//        return referencedDocumentUniqueId;
+//    }
+//
+//    public void setReferencedDocumentUniqueId(String referencedDocumentUniqueId) {
+//        this.referencedDocumentUniqueId = referencedDocumentUniqueId;
+//    }
     public Date getDocumentValidPeriod() {
         return documentValidPeriod;
     }
@@ -293,14 +296,13 @@ public class DocumentsReceived implements Serializable {
         this.documentAcceptancePeriod = documentAcceptancePeriod;
     }
 
-    public String getActualDocumentFilepath() {
-        return actualDocumentFilepath;
-    }
-
-    public void setActualDocumentFilepath(String actualDocumentFilepath) {
-        this.actualDocumentFilepath = actualDocumentFilepath;
-    }
-
+//    public String getActualDocumentFilepath() {
+//        return actualDocumentFilepath;
+//    }
+//
+//    public void setActualDocumentFilepath(String actualDocumentFilepath) {
+//        this.actualDocumentFilepath = actualDocumentFilepath;
+//    }
     public String getDocumentIssuingAuthority() {
         return documentIssuingAuthority;
     }
@@ -349,31 +351,37 @@ public class DocumentsReceived implements Serializable {
         this.documentOrganizationApplicant = documentOrganizationApplicant;
     }
 
-    public DocumentStatus getDocumentStatus() {
-        return documentStatus;
+//    public DocumentStatus getDocumentStatus() {
+//        return documentStatus;
+//    }
+//
+//    public void setDocumentStatus(DocumentStatus documentStatus) {
+//        this.documentStatus = documentStatus;
+//    }
+//
+//    public MessageSendToAp getMessageSendToAp() {
+//        return messageSendToAp;
+//    }
+//
+//    public void setMessageSendToAp(MessageSendToAp messageSendToAp) {
+//        this.messageSendToAp = messageSendToAp;
+//    }
+    public Integer getDocId() {
+        return docId;
     }
 
-    public void setDocumentStatus(DocumentStatus documentStatus) {
-        this.documentStatus = documentStatus;
+    public void setDocId(Integer docId) {
+        this.docId = docId;
     }
 
-    public MessageSendToAp getMessageSendToAp() {
-        return messageSendToAp;
-    }
-
-    public void setMessageSendToAp(MessageSendToAp messageSendToAp) {
-        this.messageSendToAp = messageSendToAp;
-    }
-
-    @XmlTransient
-    public Collection<AttachedDocumentsReceived> getAttachedDocumentsReceivedCollection() {
-        return attachedDocumentsReceivedCollection;
-    }
-
-    public void setAttachedDocumentsReceivedCollection(Collection<AttachedDocumentsReceived> attachedDocumentsReceivedCollection) {
-        this.attachedDocumentsReceivedCollection = attachedDocumentsReceivedCollection;
-    }
-
+//    @XmlTransient
+//    public Collection<AttachedDocumentsReceived> getAttachedDocumentsReceivedCollection() {
+//        return attachedDocumentsReceivedCollection;
+//    }
+//
+//    public void setAttachedDocumentsReceivedCollection(Collection<AttachedDocumentsReceived> attachedDocumentsReceivedCollection) {
+//        this.attachedDocumentsReceivedCollection = attachedDocumentsReceivedCollection;
+//    }
     @Override
     public int hashCode() {
         int hash = 0;
@@ -398,5 +406,5 @@ public class DocumentsReceived implements Serializable {
     public String toString() {
         return "com.edelivery.edeliveryserver.DocumentsReceived[ id=" + id + " ]";
     }
-    
+
 }

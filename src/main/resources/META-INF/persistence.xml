@@ -2,12 +2,24 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="com.edeliveryserver_edeliveryserver_war_1.0PU" transaction-type="JTA">
-    <jta-data-source>java:/EDeliveryServer</jta-data-source>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <validation-mode>NONE</validation-mode>
-    <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="com.edeliveryserver_edeliveryserver_war_1.0PU" transaction-type="JTA">
+        <jta-data-source>java:/EDeliveryServer</jta-data-source>
+        <class>com.edelivery.edeliveryserver.db.models.PostalAddress</class>
+        <class>com.edelivery.edeliveryserver.db.models.EvidenceReceived</class>
+        <class>com.edelivery.edeliveryserver.db.models.*</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <validation-mode>NONE</validation-mode>
+        <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
+            <properties>
+                <property name="jboss.as.jpa.providerModule" value="org.hibernate:5.2.10.Final"/>
+                <property name="dialect" value ="org.hibernate.dialect.Oracle12cDialect" />
+                <property name="javax.persistence.schema-generation.database.action" value="none"/>
+        </properties>  
+<!--        <properties>
+            <property name="eclipselink.logging.level" value="INFO"/>   
+            <property name="eclipselink.weaving" value="true"/>     
+            <property name="eclipselink.target-server" value="JBoss"/>  
+            <property name="eclipselink.cache.shared.default" value="false"/> 
+        </properties> -->
+    </persistence-unit>
 </persistence>

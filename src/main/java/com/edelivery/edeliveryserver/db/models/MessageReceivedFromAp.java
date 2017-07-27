@@ -9,6 +9,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -22,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "message_received_from_ap", catalog = "edeliveryserver", schema = "edeliveryserver")
+@Table(name = "ED_MES_REC")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MessageReceivedFromAp.findAll", query = "SELECT m FROM MessageReceivedFromAp m")
@@ -32,13 +34,13 @@ public class MessageReceivedFromAp implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 80)
-    @Column(name = "message_unique_id")
+    @Size(min = 1, max = 255)
+    @Column(name = "ap_unique_id")
     private String messageUniqueId;
 
     public MessageReceivedFromAp() {

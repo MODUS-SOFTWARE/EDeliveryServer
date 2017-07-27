@@ -40,9 +40,13 @@ public class AttachedDocumentsReceived implements Serializable {
     @Size(max = 280)
     @Column(name = "actual_document_filepath")
     private String actualDocumentFilepath;
+    @Column(name = "docId")
+    private Integer docId;
     @JoinColumn(name = "reference_document", referencedColumnName = "id")
     @ManyToOne
     private DocumentsReceived referenceDocument;
+
+    
 
     public AttachedDocumentsReceived() {
     }
@@ -65,6 +69,14 @@ public class AttachedDocumentsReceived implements Serializable {
 
     public void setActualDocumentFilepath(String actualDocumentFilepath) {
         this.actualDocumentFilepath = actualDocumentFilepath;
+    }
+    
+    public Integer getDocId() {
+        return docId;
+    }
+
+    public void setDocId(Integer docId) {
+        this.docId = docId;
     }
 
     public DocumentsReceived getReferenceDocument() {

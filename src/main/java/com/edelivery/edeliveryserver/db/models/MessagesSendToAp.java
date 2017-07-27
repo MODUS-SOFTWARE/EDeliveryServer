@@ -24,13 +24,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pantelispanka
  */
 @Entity
-@Table(name = "message_send_to_ap", catalog = "edeliveryserver", schema = "edeliveryserver")
+@Table(name = "ED_message_send_to_ap")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "MessageSendToAp.findAll", query = "SELECT m FROM MessageSendToAp m")
-    , @NamedQuery(name = "MessageSendToAp.findById", query = "SELECT m FROM MessageSendToAp m WHERE m.id = :id")
-    , @NamedQuery(name = "MessageSendToAp.findByMessageUniqueId", query = "SELECT m FROM MessageSendToAp m WHERE m.messageUniqueId = :messageUniqueId")})
-public class MessageSendToAp implements Serializable {
+    @NamedQuery(name = "MessagesSendToAp.findAll", query = "SELECT m FROM MessagesSendToAp m")
+    , @NamedQuery(name = "MessagesSendToAp.findById", query = "SELECT m FROM MessagesSendToAp m WHERE m.id = :id")
+    , @NamedQuery(name = "MessagesSendToAp.findByMessageUniqueId", query = "SELECT m FROM MessagesSendToAp m WHERE m.messageUniqueId = :messageUniqueId")})
+public class MessagesSendToAp implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,19 +42,15 @@ public class MessageSendToAp implements Serializable {
     @Size(min = 1, max = 80)
     @Column(name = "message_unique_id")
     private String messageUniqueId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
-    private DocumentsReceived documentsReceived;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "messageSendToAp")
-    private DocumentsSend documentsSend;
-
-    public MessageSendToAp() {
+    
+    public MessagesSendToAp() {
     }
 
-    public MessageSendToAp(Integer id) {
+    public MessagesSendToAp(Integer id) {
         this.id = id;
     }
 
-    public MessageSendToAp(Integer id, String messageUniqueId) {
+    public MessagesSendToAp(Integer id, String messageUniqueId) {
         this.id = id;
         this.messageUniqueId = messageUniqueId;
     }
@@ -75,21 +71,21 @@ public class MessageSendToAp implements Serializable {
         this.messageUniqueId = messageUniqueId;
     }
 
-    public DocumentsReceived getDocumentsReceived() {
-        return documentsReceived;
-    }
-
-    public void setDocumentsReceived(DocumentsReceived documentsReceived) {
-        this.documentsReceived = documentsReceived;
-    }
-
-    public DocumentsSend getDocumentsSend() {
-        return documentsSend;
-    }
-
-    public void setDocumentsSend(DocumentsSend documentsSend) {
-        this.documentsSend = documentsSend;
-    }
+//    public DocumentsReceived getDocumentsReceived() {
+//        return documentsReceived;
+//    }
+//
+//    public void setDocumentsReceived(DocumentsReceived documentsReceived) {
+//        this.documentsReceived = documentsReceived;
+//    }
+//
+//    public DocumentsSend getDocumentsSend() {
+//        return documentsSend;
+//    }
+//
+//    public void setDocumentsSend(DocumentsSend documentsSend) {
+//        this.documentsSend = documentsSend;
+//    }
 
     @Override
     public int hashCode() {
@@ -101,10 +97,10 @@ public class MessageSendToAp implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof MessageSendToAp)) {
+        if (!(object instanceof MessagesSendToAp)) {
             return false;
         }
-        MessageSendToAp other = (MessageSendToAp) object;
+        MessagesSendToAp other = (MessagesSendToAp) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
