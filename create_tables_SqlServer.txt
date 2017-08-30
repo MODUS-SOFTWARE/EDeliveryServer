@@ -1,0 +1,338 @@
+CREATE TABLE [dbo].[ED_admin_users_passwords](
+	[id] [int] NOT NULL,
+	[password] [varchar](255) NOT NULL,
+	[owned_by] [int] NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ED_administrative_users](
+	[id] [int] NOT NULL,
+	[username] [varchar](255) NOT NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ED_attached_documents_received](
+	[id] [int] NOT NULL,
+	[actual_document_filepath] [varchar](255) NULL,
+	[docId] [int] NULL,
+	[reference_document] [int] NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ED_attached_documents_send](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[actual_document_filepath] [varchar](255) NULL,
+	[docId] [int] NULL,
+	[reference_document] [varchar](255) NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ED_BSD](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[message_unique_id] [varchar](255) NOT NULL,
+	[sender_id] [int] NOT NULL,
+	[receiver_id] [int] NOT NULL,
+	[di_standard] [varchar](255) NOT NULL,
+	[di_type_version] [varchar](255) NOT NULL,
+	[di_id] [varchar](255) NOT NULL,
+	[di_type] [varchar](255) NOT NULL,
+	[di_creatiom_time] [datetime] NOT NULL,
+	[man_type] [varchar](255) NOT NULL,
+	[man_uni] [varchar](255) NOT NULL,
+	[man_descr] [varchar](255) NOT NULL,
+	[man_lang] [varchar](255) NOT NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ED_BSD_HAS_SCOPE](
+	[sbd_id] [int] IDENTITY(1,1) NOT NULL,
+	[scope_id] [varchar](255) NOT NULL
+) 
+
+GO
+
+CREATE TABLE [dbo].[ED_BSD_SCOPE](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[sc_type] [varchar](255) NOT NULL,
+	[sc_id] [varchar](255) NOT NULL,
+	[sc_instance] [varchar](500) NOT NULL
+)
+
+GO
+
+
+CREATE TABLE [dbo].[ED_DOC_STATUS](
+	[id] [int] NOT NULL,
+	[status] [varchar](255) NULL
+)
+
+GO
+
+
+CREATE TABLE [dbo].[ED_ACTUAL_MES](
+	
+	[id] [int] NOT NULL IDENTITY(1,1) PRIMARY KEY,
+
+	[docId] [int] NULL,
+
+	[doc_acceptance_period] [datetime] NULL,
+
+	[doc_authority_applicant] [varchar](255) NULL,
+
+	[doc_comments] [varchar](255) NULL,
+
+	[doc_description] [varchar](255) NULL,
+
+	[doc_etiquette_creation_date] [datetime] NULL,
+
+	[doc_issuing_authority] [varchar](255) NULL,
+
+	[doc_issuing_organization] [varchar](255) NULL,
+
+	[doc_language] [varchar](255) NULL,
+
+	[doc_organization_applicant] [varchar](255) NULL,
+
+	[doc_organization_etiquette] [varchar](255) NULL,
+
+	[doc_purpose] [varchar](255) NULL,
+
+	[doc_received_from_ap_date] [datetime] NULL,
+
+	[doc_receiver_authority] [varchar](255) NULL,
+
+	[doc_receiver_organization] [varchar](255) NULL,
+
+	[doc_submited_to_ap_date] [datetime] NULL,
+
+	[doc_title] [varchar](255) NULL,
+
+	[doc_type] [varchar](255) NULL,
+
+	[doc_valid_period] [datetime] NULL,
+
+	[mes_id] [VARCHAR](255) NOT NULL,
+
+	[mes_unique_id] [varchar](255) NOT NULL,
+
+	[mes_ap_unique_id] [varchar](255) NOT NULL
+
+
+) 
+
+GO
+
+
+
+CREATE TABLE [dbo].[ED_documents_send](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[docId] [int] NOT NULL,
+	[doc_acceptance_period] [datetime] NULL,
+	[doc_authority_applicant] [varchar](255) NULL,
+	[doc_comments] [varchar](255) NULL,
+	[doc_description] [varchar](255) NULL,
+	[doc_etiquette_creation_date] [datetime] NULL,
+	[doc_issuing_authority] [varchar](255) NULL,
+	[doc_issuing_organization] [varchar](255) NULL,
+	[doc_language] [varchar](255) NULL,
+	[doc_organization_applicant] [varchar](255) NULL,
+	[doc_organization_etiquette] [varchar](255) NOT NULL,
+	[doc_purpose] [varchar](255) NULL,
+	[doc_received_from_ap_date] [datetime] NULL,
+	[doc_receiver_authority] [varchar](255) NULL,
+	[doc_receiver_organization] [varchar](255) NULL,
+	[doc_submited_to_ap_date] [datetime] NULL,
+	[doc_title] [varchar](255) NOT NULL,
+	[doc_type] [varchar](255) NOT NULL,
+	[doc_valid_period] [datetime] NULL,
+	[mes_id] [int] NOT NULL,
+	[mes_unique_id] [varchar](255) NOT NULL,
+	[ref_document_unique_id] [varchar](255) NULL,
+	[doc_status] [int] NULL
+) 
+
+GO
+
+
+
+CREATE TABLE [dbo].[ED_evidence_documents_send](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[actual_document_filepath] [varchar](255) NULL,
+	[docId] [int] NULL,
+	[reference_document] [varchar](255) NULL,
+	[eventcode] [varchar](255) NULL,
+	[evidence_identifier] [varchar](255) NULL,
+	[evidence_name] [varchar](255) NULL,
+	[evidence_time] [varchar](255) NULL
+) 
+
+GO
+
+CREATE TABLE dbo.ED_POST_ADDRESS(
+	
+	[id] [int] IDENTITY(1, 1) NOT NULL PRIMARY KEY,
+	[country_name] [varchar](255),
+	[lang] [varchar](255),
+	[locality] [varchar](255),
+	[postall_code] [varchar](255),
+	[state_or_province] [varchar](255),
+	[street_address] [varchar](255)
+	
+)
+
+GO
+
+
+
+CREATE TABLE [dbo].[ED_MES_REC](
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[ap_unique_id] [varchar](255) NOT NULL
+)
+
+GO
+
+CREATE TABLE dbo.ED_EVID_REC(
+
+	
+[id] [int] IDENTITY(1, 1) NOT NULL PRIMARY KEY,
+
+	[e_code] [VARCHAR](220) NULL,
+
+	[e_id] [VARCHAR](220) NULL,
+
+	[to_recip] [VARCHAR](220) NULL,
+
+	[e_time] [DATETIME] NULL,
+
+	[doc_id] [INTEGER] NULL,
+
+	[refer_to] [INTEGER] NULL,
+
+	CONSTRAINT [refer_to] FOREIGN KEY (refer_to)
+
+		REFERENCES dbo.ED_ACTUAL_MES (id)
+
+
+)
+
+
+
+GO
+
+
+
+CREATE TABLE [dbo].[ED_message_send_to_ap](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[message_unique_id] [varchar](255) NOT NULL
+) 
+
+GO
+
+
+CREATE TABLE [dbo].[ED_Participants](
+	[id] [int] NOT NULL,
+	[participant_identifier_scheme] [varchar](255) NOT NULL,
+	[participant_identifier_value] [varchar](255) NOT NULL
+) 
+
+GO
+
+
+drop table dbo.ED_document_status;
+
+
+
+DROP TABLE dbo.ED_DOC_STATUS
+
+;
+
+CREATE TABLE dbo.ED_MES_STATUS(
+
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+
+	[status] [VARCHAR](20) NOT NULL
+)
+
+
+
+
+
+drop table dbo.ED_documents_send;
+
+
+
+GO
+
+
+
+DROP TABLE DBO.ED_MES_SENT;
+
+
+
+CREATE TABLE dbo.ED_MES_SENT(
+
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+
+	[doc_id] [INTEGER] NULL,
+
+	[doc_accept_per] [DATETIME] NULL,
+
+	[doc_auth_applic] [VARCHAR](255) NULL,
+
+	[doc_prot] [VARCHAR](255) NULL,
+
+	[doc_prot_date] [DATETIME] NULL,
+
+	[doc_comm] [VARCHAR](400) NULL,
+
+	[doc_subj] [VARCHAR](255) NULL,
+
+	[doc_iss_auth] [VARCHAR](255) NULL,
+
+	[doc_iss_organ] [VARCHAR](255) NULL,
+
+	[doc_lang] [VARCHAR](255) NULL,
+
+	[doc_purpose] [VARCHAR](255) NULL,
+
+	[doc_receiv_auth] [VARCHAR](255) NULL,
+
+	[doc_receiv_org] [VARCHAR](255) NULL,
+
+	[doc_subm_to_ap] [DATETIME] NULL,
+
+	[doc_title] [VARCHAR](255) NULL,
+
+	[doc_type] [VARCHAR](255) NULL,
+
+	[doc_val_per] [DATETIME] NULL,
+
+	[mes_un_id] [VARCHAR](255) NULL,
+
+	[doc_status] [INT] NOT NULL,
+
+	CONSTRAINT [doc_status] FOREIGN KEY (doc_status)
+
+		REFERENCES dbo.ED_MES_STATUS (id)  
+
+)
+
+
+
+
+
+INSERT INTO DBO.ED_MES_STATUS (status) VALUES ('PENDING')
+
+INSERT INTO DBO.ED_MES_STATUS (status) VALUES ('SENT')
+
+INSERT INTO DBO.ED_MES_STATUS (status) VALUES ('ACCEPTED')
+
+INSERT INTO DBO.ED_MES_STATUS (status) VALUES ('REJECTED')
+
+INSERT INTO DBO.ED_MES_STATUS (status) VALUES ('REJECTED_BY_AP')
+
