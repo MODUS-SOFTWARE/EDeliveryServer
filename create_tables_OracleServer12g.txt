@@ -1,0 +1,194 @@
+CREATE TABLE ED_ACTUAL_MES
+(
+
+	id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+
+	docId NUMBER(10),
+
+	doc_acceptance_period DATE,
+
+	doc_authority_applicant VARCHAR2(255),
+
+	doc_comments VARCHAR2(255),
+
+	doc_description VARCHAR2(255),
+
+	doc_etiquette_creation_date DATE,
+
+	doc_issuing_authority VARCHAR2(255),
+
+	doc_issuing_organization VARCHAR2(255),
+
+	doc_language VARCHAR2(255),
+
+	doc_organization_applicant VARCHAR2(255),
+
+	doc_organization_etiquette VARCHAR2(255),
+
+	doc_purpose VARCHAR2(255),
+
+	doc_received_from_ap_date DATE,
+
+	doc_receiver_authority VARCHAR2(255),
+
+	doc_receiver_organization VARCHAR2(255),
+
+	doc_submited_to_ap_date DATE,
+
+	doc_title VARCHAR2(255),
+
+	doc_type VARCHAR2(255),
+
+	doc_valid_period DATE,
+
+	mes_id VARCHAR2(255) NOT NULL,
+
+	mes_unique_id VARCHAR2(255) NOT NULL,
+
+	mes_ap_unique_id VARCHAR2(255) NOT NULL,
+
+	CONSTRAINT ED_ACTUAL_MESS_PK PRIMARY KEY (id)
+
+)
+
+
+
+CREATE TABLE ED_MES_STATUS
+(
+	id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+	status VARCHAR2(20) NOT NULL,
+	CONSTRAINT ED_MES_STATUS_PK PRIMARY KEY (id)
+)
+
+
+INSERT INTO ED_MES_STATUS (status) VALUES ('PENDING')
+
+INSERT INTO ED_MES_STATUS (status) VALUES ('SENT')
+
+INSERT INTO ED_MES_STATUS (status) VALUES ('ACCEPTED')
+
+INSERT INTO ED_MES_STATUS (status) VALUES ('REJECTED')
+
+INSERT INTO ED_MES_STATUS (status) VALUES ('REJECTED_BY_AP')
+
+
+
+
+CREATE TABLE ED_POST_ADDRESS
+(
+
+
+	id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+
+
+	country_name VARCHAR2(255),
+
+
+	lang VARCHAR2(255),
+
+
+	locality VARCHAR2(255),
+
+
+	postall_code VARCHAR2(255),
+
+
+	state_or_province VARCHAR2(255),
+
+
+	street_address VARCHAR2(255),
+
+
+	CONSTRAINT ED_POST_ADDRESS_PK PRIMARY KEY (id)
+
+
+)
+
+CREATE TABLE ED_MES_REC(
+
+	
+id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+
+	ap_unique_id VARCHAR2(255) NOT NULL; 
+
+        CONSTRAINT ED_MES_REC_PK PRIMARY KEY (id)
+)
+
+
+CREATE TABLE ED_EVID_REC(
+
+	
+
+id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+
+	e_code VARCHAR2(220)
+
+	e_id VARCHAR2(220),
+
+	to_recip VARCHAR2(220),
+
+	e_time DATA,
+
+	doc_id NUMBER(10),
+
+	refer_to NUMBER(10),
+
+	CONSTRAINT actual_mes_ref
+		FOREIGN KEY (refer_to)
+
+		REFERENCES ED_ACTUAL_MES (id)
+
+
+)
+
+CREATE TABLE dbo.ED_MES_SENT(
+
+	
+
+id NUMBER(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+
+	doc_id NUMBER(10) NULL,
+
+	doc_accept_per DATE,
+
+	doc_auth_applic VARCHAR2(255),
+
+	doc_prot VARCHAR2(255),
+
+	doc_prot_date VARCHAR2(255),
+
+	doc_comm VARCHAR2(400),
+
+	doc_subj VARCHAR2(255),
+
+	doc_iss_auth VARCHAR2(255),
+
+	doc_iss_organ VARCHAR2(255),
+
+	doc_lang VARCHAR2(255),
+
+	doc_purpose VARCHAR2(255),
+
+	doc_receiv_auth VARCHAR2(255),
+
+	doc_receiv_org VARCHAR2(255),
+
+	doc_subm_to_ap DATE,
+
+	doc_title VARCHAR2(255),
+
+	doc_type VARCHAR2(255),
+
+	doc_val_per DATE,
+
+	mes_un_id VARCHAR2(255),
+
+	doc_status NUMBER(10),
+
+	CONSTRAINT doc_status FOREIGN KEY (doc_status)
+
+		REFERENCES ED_MES_STATUS (id)  
+
+)
+
+
